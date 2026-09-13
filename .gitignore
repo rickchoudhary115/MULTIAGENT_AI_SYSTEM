@@ -1,8 +1,40 @@
+# Node modules
 node_modules/
+**/node_modules/
+
+# Environment variables
 .env
 .env.*
 !.env.example
-services/auth/serviceAccountKey.json
- Firebase / Google Cloud credentials
+
+# Firebase / Google Cloud credentials
+serviceAccountKey.json
 **/serviceAccountKey.json
 **/*serviceAccount*.json
+
+# Firebase credentials
+firebase-adminsdk*.json
+**/firebase-adminsdk*.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Build files
+dist/
+**/dist/
+build/
+**/build/
+
+# Vite
+frontend/.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

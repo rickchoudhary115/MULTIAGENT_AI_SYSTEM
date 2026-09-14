@@ -19,6 +19,8 @@ import {
 import { setUserData } from "../redux/userSlice";
 import { createConversation } from "../features/createConversation";
 import logOut from "../features/logOut";
+import { setmessage } from "../redux/messageSlice"; 
+import getMessages from "../features/getMessages";
 
 function SideBar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -30,10 +32,6 @@ function SideBar() {
   const { userData } = useSelector((state) => state.user);
 
   const user = userData?.user;
-  console.log("USER:", user);
-  console.log("NAME:", user?.name);
-  console.log("EMAIL:", user?.email);
-  console.log("AVATAR:", user?.avatar);
   useEffect(() => {
     const getConv = async () => {
       const data = await getConversations();
@@ -44,6 +42,13 @@ function SideBar() {
   const handleCreateConversation = async () => {
     const data = await createConversation();
     dispatch(addConversation(data));
+  };
+  const handleSelectConversation = async (conv) => {
+    dispatch(setSelectedConversation(conv));
+
+    const messages = await getMessages(conv._id);
+
+    dispatch(setmessage(messages));
   };
 
   if (collapsed) {
@@ -150,7 +155,7 @@ function SideBar() {
             return (
               <div
                 key={conv?._id}
-                onClick={() => dispatch(setSelectedConversation(conv))}
+                onClick={() => handleSelectConversation(conv)}
                 className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2.5 rounded-[10px] border transition-colors duration-150 ${isActive ? "bg-indigo-500/10 border-indigo-500/[0.18]" : "bg-transparent border-transparent"}`}
               >
                 <div
@@ -160,7 +165,7 @@ function SideBar() {
                   <MessageSquare size={13} />
                 </div>
                 <span
-                  className={`text-{13px} font-medium truncate   ${isActive ? "text-slate-100" : "text-slate-300"}`}
+                  className={`text-[13px] font-medium truncate   ${isActive ? "text-slate-100" : "text-slate-300"}`}
                 >
                   {conv?.title || "New Chat"}
                 </span>

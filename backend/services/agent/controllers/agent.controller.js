@@ -4,7 +4,7 @@ import {graph} from "../graph/graph.js"
 export const agent =async (req,res)=>{
     try {
         const {prompt,conversationId} =req.body
-        await axios.post(`${process.env.HAT_SERVICE_URL}/save-message`, {
+        await axios.post(`${process.env.CHAT_SERVICE_URL}/save-message`, {
           conversationId,
           role:"user",
           content:prompt,
@@ -13,6 +13,11 @@ export const agent =async (req,res)=>{
             prompt,conversationId
         })
         const response=result.aiResponse
+         await axios.post(`${process.env.CHAT_SERVICE_URL}/save-message`, {
+           conversationId,
+           role: "assistant",
+           content: response,
+         });
         return res.status(200).json(response)
 
     } catch (error) {

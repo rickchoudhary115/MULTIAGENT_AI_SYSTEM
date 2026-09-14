@@ -12,18 +12,42 @@ function ChatInput() {
         (state) => state.message
       );
     const dispatch=useDispatch()
-  const handleSendMessage=async()=>{
+  const handleSendMessage = async () => {
+    const prompt = value.trim();
+
+    if (!prompt) return;
+
     const payload = {
-      prompt:value.trim(),
-      conversationId:selectedConversation?._id,
+      prompt,
+      conversationId: selectedConversation?._id,
     };
 
-    dispatch(addMessage({role:"user",content:value.trim()}))
-    setValue("")
-    const data= await sendMessage(payload)
-      dispatch(addMessage({ role: "assistant", content: data}));
-    console.log(data)
-  }
+    console.log("CHAT PAYLOAD:", payload);
+
+    dispatch(
+      addMessage({
+        role: "user",
+        content: prompt,
+      }),
+    );
+
+    setValue("");
+
+    try {
+      const data = await sendMessage(payload);
+
+      console.log("AI RESPONSE:", data);
+
+      dispatch(
+        addMessage({
+          role: "assistant",
+          content: data,
+        }),
+      );
+    } catch (error) {
+      console.log("CHAT ERROR:", error.response?.data);
+    }
+  };
   return (
     <div className="w-full overflow-hidden px-3 md:px-5 py-4 border-t border-white/[0.06] bg-[#0d0f14]">
       <div className="flex flex-col gap-2 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 pt-3.5 pb-3">

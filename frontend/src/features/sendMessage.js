@@ -6,8 +6,6 @@ try {
     return data
 } catch (error) {
   console.log("SEND MESSAGE ERROR:", error);
-  console.log("STATUS:", error.response?.status);
-  console.log("RESPONSE:", error.response?.data);
   throw error;
 }
 }

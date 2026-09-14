@@ -1,40 +1,61 @@
+import {
+  AIMessage,
+  HumanMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
+
 import { getModel } from "../config/llmModel.js";
+import { getMemory } from "../config/memory.js";
 
 export const chatAgent = async (state) => {
   const llm = await getModel("chat");
 
-  const systemPrompt =`You are CortexAI, an intelligent AI assistant.
-  
-  Rules:
-  -For simple questions,greetings, and short queries , respond naturally in plain text.
-  -For technical, educational , coding, or detailed topics, use clean Markdown.
-  
-  
-  Formatting:
+  const history = (await getMemory(state.conversationId)) || [];
+  console.log("CONVERSATION ID:", state.conversationId);
+  console.log("MEMORY HISTORY:", history);
 
+  const systemPrompt = `You are CortexAI, an intelligent AI assistant.
 
-  - Use # for titles and ## for selection.
-  - Leave a blank line after headings.
-  - Use bullets lists for steps.
-  - Use numbered lists for steps.
-  - Use fenced code blocks with language tags for code.
-  - Keep paragraphs short and readable.
-  - Never write heading and content on the same line.
-  - Never generate large walls of texts.
-  
-  
-  `;
+Rules:
 
-  const response = await llm.invoke([
-    {
-      role: "system",
-      content: systemPrompt,
-    },
-    {
-      role: "human",
-      content: state.prompt,
-    },
-  ]);
+- For simple questions, greetings, and short queries, respond naturally in plain text.
+- For technical, educational, coding, or detailed topics, use clean Markdown.
+
+Formatting:
+
+- Use # for titles and ## for sections.
+- Leave a blank line after headings.
+- Use bullet lists for steps.
+- Use numbered lists for steps.
+- Use fenced code blocks with language tags for code.
+- Keep paragraphs short and readable.
+- Never write heading and content on the same line.
+- Never generate large walls of text.
+`;
+
+  const messages = [new SystemMessage(systemPrompt)];
+
+  history.forEach((msg) => {
+    if (msg.role === "user") {
+      messages.push(new HumanMessage(msg.content));
+    }
+
+    if (msg.role === "assistant") {
+      messages.push(new AIMessage(msg.content));
+    }
+  });
+
+  messages.push(new HumanMessage(state.prompt));
+
+  console.log("MESSAGES:", messages);
+console.log(
+  "LLM MESSAGES:",
+  messages.map((msg) => ({
+    type: msg._getType(),
+    content: msg.content,
+  })),
+);
+  const response = await llm.invoke(messages);
 
   return {
     ...state,

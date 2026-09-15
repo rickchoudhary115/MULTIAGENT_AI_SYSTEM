@@ -46,7 +46,7 @@ function SideBar() {
   const handleSelectConversation = async (conv) => {
     dispatch(setSelectedConversation(conv));
 
-    const messages = await getMessages(conv._id);
+    const messages = await getMessages(conv?._id);
 
     dispatch(setmessage(messages));
   };
@@ -62,7 +62,7 @@ function SideBar() {
         </button>
         <button
           className="flex items-center justify-center  w-9 h-9 rounded-xl text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
-          onClick={handleCreateConversation}
+          onClick={() => dispatch(setSelectedConversation(null))}
         >
           <Plus size={17} />
         </button>
@@ -121,9 +121,7 @@ function SideBar() {
           </span>
           <button
             className="flex items-center justify-center  w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
-            onClick={() => {
-              handleCreateConversation();
-            }}
+            onClick={() => dispatch(setSelectedConversation(null))}
           >
             <PenSquare size={14} />
           </button>
@@ -131,9 +129,7 @@ function SideBar() {
         <div className="px-4 pt-4 pb-1">
           <button
             className="w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-violet-700 rounded-xl py-[10px] border-none cursor-pointer hover:opacity-90 transition-opacity duration-150"
-            onClick={() => {
-              handleCreateConversation();
-            }}
+            onClick={() => dispatch(setSelectedConversation(null))}
           >
             <Plus size={15} />
             New Chat

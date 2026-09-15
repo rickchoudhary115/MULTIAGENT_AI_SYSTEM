@@ -11,9 +11,7 @@ export const chatAgent = async (state) => {
   const llm = await getModel("chat");
 
   const history = (await getMemory(state.conversationId)) || [];
-  console.log("CONVERSATION ID:", state.conversationId);
-  console.log("MEMORY HISTORY:", history);
-
+  
   const systemPrompt = `You are CortexAI, an intelligent AI assistant.
 
 Rules:
@@ -48,14 +46,9 @@ Formatting:
   messages.push(new HumanMessage(state.prompt));
 
   console.log("MESSAGES:", messages);
-console.log(
-  "LLM MESSAGES:",
-  messages.map((msg) => ({
-    type: msg._getType(),
-    content: msg.content,
-  })),
-);
   const response = await llm.invoke(messages);
+  console.log("AI RESPONSE:", response.content);
+
 
   return {
     ...state,

@@ -19,9 +19,8 @@ function ChatArea() {
       if (!selectedConversation?._id) return;
 
       try {
+       if( selectedConversation.title == "New Conversation") return;
         const data = await getMessages(selectedConversation._id);
-
-        console.log("MESSAGES FROM API:", data);
 
         dispatch(setmessage(data));
       } catch (error) {
@@ -30,7 +29,7 @@ function ChatArea() {
     };
 
     getMsg();
-  }, [selectedConversation, dispatch]);
+  }, [selectedConversation?._id, dispatch]);
 
   return (
     <div className="flex-1 flex flex-col">

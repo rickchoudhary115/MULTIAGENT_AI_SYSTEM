@@ -32,10 +32,11 @@ export const getConversations = async (req, res) => {
 export const updateConversation = async (req, res) => {
   try {
     const {id,title}=req.body
-    const conversation = await Conversation.findByIdAndUpdate({id
-    },{
-        title
-    })
+    const conversation = await Conversation.findByIdAndUpdate(
+      id,
+      { title },
+      { new: true },
+    );
 
     return res.status(200).json(conversation);
   } catch (error) {

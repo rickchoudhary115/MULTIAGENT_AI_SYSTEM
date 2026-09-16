@@ -11,13 +11,18 @@ export const chatAgent = async (state) => {
   const llm = await getModel("chat");
 
   const history = (await getMemory(state.conversationId)) || []
-  const searchContext = state.searchResults?`
-  Web Search Results:
+  const limitedHistory = history.slice(-4).map((msg) => ({
+    ...msg,
+    content: String(msg.content).slice(0, 2000),
+  }));
+ const searchContext = state.searchResults
+   ? `
+Web Search Results:
+${JSON.stringify(state.searchResults).slice(0, 5000)}
 
-  ${JSON.stringify(state.searchResults)}
-  
-  Answer the user using only the above search results.
-  `:""
+Answer the user using only the above search results.
+`
+   : "";
   const systemPrompt = `You are CortexAI, an intelligent AI assistant.
 
       ${searchContext}
@@ -45,15 +50,15 @@ Formatting:
 
   const messages = [new SystemMessage(systemPrompt)];
 
-  history.forEach((msg) => {
-    if (msg.role === "user") {
-      messages.push(new HumanMessage(msg.content));
-    }
+ limitedHistory.forEach((msg) => {
+   if (msg.role === "user") {
+     messages.push(new HumanMessage(msg.content));
+   }
 
-    if (msg.role === "assistant") {
-      messages.push(new AIMessage(msg.content));
-    }
-  });
+   if (msg.role === "assistant") {
+     messages.push(new AIMessage(msg.content));
+   }
+ });
 
   messages.push(new HumanMessage(state.prompt));
 

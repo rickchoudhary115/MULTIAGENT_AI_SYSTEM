@@ -3,6 +3,7 @@ import { ChatGenerationChunk } from "@langchain/core/outputs";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 const groq = new ChatGroq({
   model: "openai/gpt-oss-120b",
+
   //   temperature: 0,
   //   maxTokens: undefined,
   //   maxRetries: 2,

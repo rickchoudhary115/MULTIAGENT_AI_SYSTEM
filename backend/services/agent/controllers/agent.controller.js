@@ -3,44 +3,43 @@ import { graph } from "../graph/graph.js";
 import { addMessage } from "../config/memory.js";
 export const agent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body;
+    const { prompt, conversationId, agent } = req.body;
 
     // await redis.del(`messages-${conversationId}`)
-
-    const result = await graph.invoke({
-      prompt,
-      conversationId,
-    });
-
-    const response = result.aiResponse;
-
-    // Save user message AFTER graph
-    await addMessage(conversationId, "user", prompt);
-
     await axios.post(`${process.env.CHAT_SERVICE_URL}/save-message`, {
       conversationId,
       role: "user",
       content: prompt,
     });
+    const result = await graph.invoke({
+      prompt,
+      conversationId,
+      agent,
+    });
+
+    await addMessage(conversationId, "user", prompt);
 
     // Save AI response
-    await addMessage(conversationId, "assistant", response);
+    await addMessage(conversationId, "assistant", result.aiResponse);
 
     await axios.post(`${process.env.CHAT_SERVICE_URL}/save-message`, {
       conversationId,
       role: "assistant",
-      content: response,
+      content: result.aiResponse,
+      images: result.images,
     });
 
-    return res.status(200).json(response);
+    return res.status(200).json({
+      answer: result.aiResponse,
+      images: result.images,
+    });
   } catch (error) {
-    console.error("AGENT ERROR:", error);
-    console.error("AGENT ERROR MESSAGE:", error.message);
-    console.error("AGENT ERROR STACK:", error.stack);
+    console.error("AGENT ERROR:", error.response?.data || error.message);
+    console.error("AGENT STACK:", error.stack);
 
     return res.status(500).json({
       message: "Agent error",
-      error: error.message,
+      error: error.response?.data || error.message,
     });
   }
 };

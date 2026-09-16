@@ -1,6 +1,13 @@
 import { getModel } from "../config/llmModel.js";
 
 export const router = async (state) => {
+  if (state.agent && state.agent !== "auto") {
+    return {
+      ...state,
+      agent: state.agent,
+    };
+  }
+
   const llm = await getModel("router");
 
   const prompt = `
@@ -49,8 +56,6 @@ ${state.prompt}
   const response = await llm.invoke(prompt);
 
   const agent = response.content.trim().toLowerCase().replace(/[^\w]/g, "");
-
-  console.log("Router selected:", agent);
 
   return {
     ...state,

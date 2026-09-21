@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import sendMessage from "../features/sendMessage";
 
-import { addMessage } from "../redux/messageSlice";
+import { addMessage, setArtifacts } from "../redux/messageSlice";
 
 import { createConversation } from "../features/createConversation";
 
@@ -98,15 +98,17 @@ function ChatInput() {
 
     try {
       const data = await sendMessage(payload);
-
+      dispatch(setArtifacts(data.artifacts || []))
       // Add AI response
       dispatch(
         addMessage({
           role: "assistant",
           content: data?.answer,
           images: data?.images || [],
+          artifacts: data?.artifacts || [],
         }),
       );
+      console.log(data);
     } catch (error) {
       console.log("CHAT ERROR:", error.response?.data || error.message);
     }

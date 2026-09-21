@@ -25,7 +25,7 @@ function Home() {
       try {
         const response = await api.get("/api/me");
 
-        console.log("CURRENT USER:", response.data);
+        console.log(response.data);
 
         dispatch(setUserData(response.data.user));
       } catch (error) {

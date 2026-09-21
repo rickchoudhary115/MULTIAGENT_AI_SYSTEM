@@ -5,7 +5,7 @@ import Nav from "./Nav";
 import ChatInput from "./ChatInput";
 import { useDispatch, useSelector } from "react-redux";
 import getMessages from "../features/getMessages";
-import { setmessage } from "../redux/messageSlice";
+import { setArtifacts, setmessage } from "../redux/messageSlice";
 
 function ChatArea() {
   const { selectedConversation } = useSelector(
@@ -20,9 +20,12 @@ function ChatArea() {
 
       try {
        if( selectedConversation.title == "New Conversation") return;
-        const data = await getMessages(selectedConversation._id);
+        const data = await getMessages(selectedConversation?._id);
+        console.log(data)
 
         dispatch(setmessage(data));
+        const latestArtifactMessage=[...data].reverse().find(msg=>msg.artifacts && msg.artifacts.length>0)
+        dispatch(setArtifacts(latestArtifactMessage?.artifacts || []));
       } catch (error) {
         console.log("Error fetching messages:", error);
       }

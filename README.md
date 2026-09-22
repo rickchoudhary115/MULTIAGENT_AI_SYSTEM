@@ -38,21 +38,21 @@ Most people juggle **four or five separate AI tools** to get through a single da
 - A different app entirely for "explain this PDF" or "summarize this slide deck"
 - And yet another for asking questions about a screenshot or image
 
-Each tool has its own login, its own context window, its own history that doesn't talk to the others. You end up **copy-pasting between AI tools** just to finish one task — which defeats the point of having AI help in the first place.
+Each tool has its own login, its own context window, its own history that doesn't talk to the others. You end up **copy-pasting between AI tools** just to finish one task — which defeats the point of having AI in the first place.
 
-Most single-model chat apps make this worse by trying to cram every capability into one giant prompt, which makes the assistant slower, less accurate, and harder to extend. Bolting "web search" or "PDF understanding" onto a general chat model as an afterthought rarely produces a great experience for any one of those tasks.
+Most single-model chat apps make this worse by trying to cram every capability into one giant prompt, which makes the assistant slower, less accurate, and harder to extend. Bolting "web search" or "vision" onto one chat thread often means the interface becomes bloated and the routing logic becomes messy.
 
 ## 💡 Why CortexAI
 
 **CortexAI treats different kinds of requests as genuinely different problems**, instead of forcing one model to be mediocre at all of them.
 
-Under the hood, a **LangGraph router** looks at intent first — *is this a conversation, a coding task, a search query, a document question, or an image question?* — and only then hands the request to the agent built for that job. The result is a **single workspace** that feels like one product to the user, but is architected like a set of focused specialists behind the scenes:
+Under the hood, a **LangGraph router** looks at intent first — *is this a conversation, a coding task, a search query, a document question, or an image question?* — and only then hands the request to the right agent.
 
 - 🗨️ Ask a general question → the **Chat Agent** answers conversationally
 - 🧑‍💻 Ask for a login page → the **Coding Agent** classifies it as `code_generation` and returns structured files as artifacts, not a wall of text
 - 🔎 Ask about something recent → the **Search Agent** pulls fresh, cited results via **Tavily**
 - 📄 Ask about a document → **PDF/PPT agents** take over
-- 🖼️ Ask about an image → the **Vision Agent** handles it
+- 🖼️ Ask about an image ��� the **Vision Agent** handles it
 
 All of it sits behind one login, one conversation history, and one UI — so the "switching tabs" problem disappears.
 
@@ -190,7 +190,7 @@ sequenceDiagram
 
 ## 🧑‍💻 Coding Intelligence in Action
 
-The coding agent doesn't just "write code" — it first figures out **what kind** of coding help is being asked for, then shapes the response format to match.
+The coding agent doesn't just "write code" — it first figures out **what** kind of coding help is being asked for, then shapes the response format to match.
 
 ```text
 "Why am I getting Cannot read properties of undefined?"
@@ -214,7 +214,7 @@ The coding agent doesn't just "write code" — it first figures out **what kind*
              Structured JSON
                     │
                     ▼
-     Login.jsx · Login.css · api.js
+      Login.jsx · Login.css · api.js
                     │
                     ▼
              Artifact Panel
@@ -394,7 +394,7 @@ REDIS_URL=redis://localhost:6379
 ## 💾 Data & Session Requirements
 
 - **MongoDB** — the system of record for users, conversations, and messages. Works fine as a single local instance or Atlas cluster during development.
-- **Redis** — backs sessions created after Firebase login, and holds short-term agent memory (recent conversation context) so agents can respond with continuity without hitting MongoDB on every turn.
+- **Redis** — backs sessions created after Firebase login, and holds short-term agent memory (recent conversation context) so agents can respond with continuity without hitting MongoDB on every request.
 
 Both are wired up in `docker-compose.yml` for one-command local startup.
 
@@ -444,9 +444,7 @@ Both are wired up in `docker-compose.yml` for one-command local startup.
 
 | Main Workspace | Coding + Artifact Panel | Search + Image Results |
 |---|---|---|
-| <img src="https://placehold.co/380x240/0b1120/60a5fa?text=Main+Workspace" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/34d399?text=Artifact+Panel" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/f472b6?text=Search+%2B+Images" width="100%"/> |
-
-> Replace these with real screenshots — actual UI shots make the repo far easier to evaluate at a glance than placeholders.
+| <img src="https://placehold.co/380x240/0b1120/60a5fa?text=Main+Workspace" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/34d399?text=Coding+%2B+Artifact+Panel" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/fbbf24?text=Search+%2B+Image+Results" width="100%"/> |
 
 <br/>
 
@@ -478,7 +476,7 @@ Both are wired up in `docker-compose.yml` for one-command local startup.
 
 ## 📚 What This Project Demonstrates
 
-Full-stack development · React architecture · REST APIs · Microservices · Firebase auth · Redis sessions · MongoDB · LangChain & LangGraph · Agent routing · LLM integration · Prompt engineering · Web search integration · AI-generated code artifacts · Docker · State management (Redux)
+Full-stack development · React architecture · REST APIs · Microservices · Firebase auth · Redis sessions · MongoDB · LangChain & LangGraph · Agent routing · LLM integration · Prompt engineering · Multi-agent orchestration.
 
 <br/>
 

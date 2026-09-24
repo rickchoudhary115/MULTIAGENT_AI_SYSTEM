@@ -12,7 +12,7 @@ export const router = async (state) => {
   
 const prompt = `
 
-╔══════════════════════════════════════════════════════════════╗
+══════════════════════════════════════════════════════════════╗
 ║                    CORTEXAI AGENT ROUTER                    ║
 ╚══════════════════════════════════════════════════════════════╝
 
@@ -40,38 +40,13 @@ AVAILABLE AGENTS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Use "chat" for normal conversation, explanations, learning,
-personal statements, casual questions, and requests that do
-NOT require external/current information.
-
-Includes:
-
-• Greetings and introductions
-• Casual conversation
-• User telling you their name or personal preference
-• General knowledge
-• Explanations
-• Educational questions
-• Definitions
-• Concepts
-• Reasoning
-• Learning
-• Non-current factual questions
-• Opinions and discussions that do not require web research
-• Follow-up conversation based on information already available
-
-IMPORTANT:
-
-A user's personal statement is NOT automatically a search request.
+personal statements, casual questions, general knowledge,
+and requests that do NOT require external/current information
+or software creation.
 
 Examples:
 
 "My name is Rick"
-→ chat
-
-"I am Rick"
-→ chat
-
-"Call me Rick"
 → chat
 
 "I like Python"
@@ -89,14 +64,26 @@ Examples:
 "Teach me recursion"
 → chat
 
+"What is a dashboard?"
+→ chat
+
+"How does a fitness tracker work?"
+→ chat
+
+IMPORTANT:
+
+Do NOT select chat when the user is asking you to CREATE,
+BUILD, GENERATE, MAKE, DEVELOP, DESIGN, or IMPLEMENT
+a digital/software product.
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔎 SEARCH AGENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use "search" ONLY when the user needs information that must be
-retrieved from the internet, or explicitly asks to search/find/
-look up/browse something online.
+Use "search" when the user needs information retrieved from
+the internet or explicitly asks to search, find, look up,
+browse, or research something online.
 
 Use search for:
 
@@ -113,12 +100,12 @@ Use search for:
 • Current sports information
 • Current company information
 • Current product information
-• Websites
+• Existing images available online
 • Articles
 • Online resources
+• Websites
 • Products
-• Existing images available online
-• Explicit web/internet research
+• Explicit internet research
 
 Strong search indicators:
 
@@ -147,9 +134,6 @@ Examples:
 "Show me images of Lord Krishna"
 → search
 
-"Find a picture related to the name Rick"
-→ search
-
 "Search the web for React tutorials"
 → search
 
@@ -159,47 +143,54 @@ Examples:
 "Find websites for learning Python"
 → search
 
+"Find dashboard templates online"
+→ search
+
+"Search for fitness dashboard examples"
+→ search
+
 IMPORTANT:
 
-Do NOT use search merely because a person, company, place,
-or product name appears in the user's message.
+Do NOT use search simply because a website, company,
+person, product, or technology is mentioned.
 
-For example:
-
-"My name is Rick"
-→ chat
-
-"I am learning React"
-→ chat
-
-"I like NVIDIA GPUs"
-→ chat
-
-But:
-
-"Search for Rick"
-→ search
-
-"Find information about NVIDIA"
-→ search
-
-"Show me pictures of Rick"
-→ search
+If the user wants to CREATE the website/product/UI,
+use coding instead.
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💻 CODING AGENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use "coding" when the PRIMARY INTENT is programming or software
-development.
+Use "coding" when the PRIMARY INTENT is programming,
+software development, software creation, or creation of
+a digital interface/application.
+
+IMPORTANT:
+
+The user does NOT need to mention code, programming,
+HTML, CSS, JavaScript, React, or any programming language.
+
+If the user asks to CREATE, BUILD, GENERATE, MAKE, DEVELOP,
+DESIGN, or IMPLEMENT a digital/software product, choose:
+
+→ coding
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧩 PROGRAMMING & SOFTWARE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Use coding for:
 
 • Writing code
+• Generating code
 • Debugging
 • Fixing errors
-• Explaining code
+• Code review
+• Code explanation
+• Code optimization
+• Code conversion
 • Programming questions
 • React
 • JavaScript
@@ -218,28 +209,210 @@ Use coding for:
 • Frontend
 • Backend
 • Full-stack
-• Architecture
+• Software architecture
 • Deployment
 • DevOps
 • Algorithms
 • Data structures
 • Programming projects
 
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 WEBSITE / UI / APP CREATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These are CODING requests even when no programming language
+is mentioned.
+
+Use coding when the user wants to create:
+
+• Website
+• Webpage
+• Web application
+• Mobile application
+• Dashboard
+• Admin panel
+• Portfolio
+• Landing page
+• UI
+• UX interface
+• Frontend
+• Component
+• Form
+• Calculator
+• Tracker
+• Habit tracker
+• Fitness tracker
+• Fitness dashboard
+• Analytics dashboard
+• CRM
+• Ecommerce interface
+• Management system
+• Student management system
+• Library management system
+• Task management system
+• Weather app
+• Chat application
+• Login page
+• Signup page
+• Profile page
+• Settings page
+• Digital tool
+• Software prototype
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔥 CREATION VERBS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These verbs strongly indicate CODING when the object is
+a digital/software product:
+
+• create
+• build
+• generate
+• make
+• develop
+• design
+• implement
+• code
+• program
+• construct
+
 Examples:
 
-"Fix this React error"
+"Create a dashboard"
 → coding
 
-"Why is my MongoDB connection failing?"
+"Build a dashboard"
 → coding
 
-"Write a FastAPI API"
+"Generate a dashboard"
 → coding
 
-"Build a login system"
+"Make a fitness dashboard"
 → coding
 
-"Explain this C++ code"
+"Create a habit tracker"
+→ coding
+
+"Build a fitness tracker"
+→ coding
+
+"Generate a portfolio website"
+→ coding
+
+"Make a landing page"
+→ coding
+
+"Create an admin panel"
+→ coding
+
+"Build an ecommerce website"
+→ coding
+
+"Design a modern login page"
+→ coding
+
+"Create a React dashboard"
+→ coding
+
+"Build a frontend for my project"
+→ coding
+
+"Generate HTML CSS JavaScript for a dashboard"
+→ coding
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 CRITICAL DASHBOARD RULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When the user asks to CREATE, BUILD, GENERATE, MAKE,
+DEVELOP, DESIGN, or IMPLEMENT a dashboard:
+
+→ coding
+
+Examples:
+
+"Create a dashboard"
+→ coding
+
+"Build a dashboard"
+→ coding
+
+"Generate a dashboard"
+→ coding
+
+"Make a fitness dashboard"
+→ coding
+
+"Create a habit tracker dashboard"
+→ coding
+
+"Generate a habit tracker or fitness dashboard"
+→ coding
+
+"Build an analytics dashboard"
+→ coding
+
+"Create an admin dashboard"
+→ coding
+
+
+BUT:
+
+"What is a dashboard?"
+→ chat
+
+"How does a dashboard work?"
+→ chat
+
+"Explain dashboard design"
+→ chat
+
+"Find dashboard templates"
+→ search
+
+"Search for dashboard examples"
+→ search
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ PRIMARY INTENT DISTINCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Always understand what the user wants to ACCOMPLISH.
+
+Do not route based only on one keyword.
+
+The same noun can belong to different agents depending
+on the user's intent.
+
+Example:
+
+"dashboard"
+→ chat
+
+"what is a dashboard?"
+→ chat
+
+"explain dashboards"
+→ chat
+
+"find dashboard examples"
+→ search
+
+"search dashboard templates"
+→ search
+
+"create a dashboard"
+→ coding
+
+"build a dashboard"
+→ coding
+
+"generate a fitness dashboard"
 → coding
 
 
@@ -247,8 +420,8 @@ Examples:
 📄 PDF AGENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use "pdf" when the PRIMARY INTENT specifically involves PDF
-files or PDF generation.
+Use "pdf" when the PRIMARY INTENT specifically involves
+PDF files or PDF generation.
 
 Use pdf for:
 
@@ -312,10 +485,7 @@ Examples:
 👁️ VISION AGENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use "vision" when the PRIMARY INTENT requires generating,
-creating, editing, modifying, or analyzing visual content.
-
-Use vision for:
+Use "vision" when the PRIMARY INTENT requires:
 
 • Generating an image
 • Creating an image
@@ -331,35 +501,17 @@ Use vision for:
 • Reading text from an image
 • Image-based reasoning
 
-Examples:
-
-"Generate an image of a cat"
-→ vision
-
-"Create a futuristic city"
-→ vision
-
-"Draw a robot"
-→ vision
-
-"Edit this image"
-→ vision
-
-"Analyze this image"
-→ vision
-
-"What is in this image?"
-→ vision
-
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚡ SEARCH vs VISION — CRITICAL DISTINCTION
+⚡ SEARCH vs VISION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 If the user wants an EXISTING image from the internet:
+
 → search
 
 If the user wants a NEW image generated by AI:
+
 → vision
 
 Examples:
@@ -367,7 +519,7 @@ Examples:
 "Find pictures of cats"
 → search
 
-"Show me images of the Eiffel Tower from the internet"
+"Show me images of the Eiffel Tower"
 → search
 
 "Find a picture of Rick"
@@ -387,11 +539,9 @@ Examples:
 🎯 PRIMARY INTENT RULE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Always determine what the user is ACTUALLY trying to accomplish.
+Always determine what the user is actually trying to accomplish.
 
-Do not route based only on individual keywords.
-
-For example:
+Examples:
 
 "My name is Rick, I am learning Python"
 → chat
@@ -408,6 +558,21 @@ For example:
 "Rick, fix this Python error"
 → coding
 
+"Create a fitness dashboard"
+→ coding
+
+"Generate a habit tracker"
+→ coding
+
+"Build a portfolio website"
+→ coding
+
+"Explain what a fitness dashboard is"
+→ chat
+
+"Find fitness dashboard examples"
+→ search
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🛡️ ROUTING PRIORITY
@@ -415,7 +580,7 @@ For example:
 
 When multiple signals appear, use this priority:
 
-1. Explicit image analysis/editing/generation
+1. Explicit image generation/editing/analysis
    → vision
 
 2. Explicit PDF task
@@ -424,16 +589,21 @@ When multiple signals appear, use this priority:
 3. Explicit PowerPoint/presentation task
    → ppt
 
-4. Explicit programming/software task
+4. CREATE / BUILD / GENERATE / MAKE / DEVELOP / DESIGN /
+   IMPLEMENT a software product, website, webpage, UI,
+   dashboard, application, tracker, tool, or digital interface
    → coding
 
-5. Explicit internet/web/search request
+5. Explicit programming/software development task
+   → coding
+
+6. Explicit internet/web/search request
    → search
 
-6. Current/latest/recent/live information request
+7. Current/latest/recent/live information request
    → search
 
-7. Normal conversation, personal statements, explanations,
+8. Normal conversation, personal statements, explanations,
    learning, or general questions
    → chat
 
@@ -448,35 +618,46 @@ Do NOT select search just because:
 • A company name appears
 • A product name appears
 • A place name appears
-• The user mentions "picture" without asking to find one
-• The user introduces themselves
-• The user tells you personal information
-• The user asks a general knowledge question
+• A technology name appears
+
+Do NOT select coding just because:
+
+• The word "dashboard" appears
+• The word "website" appears
+• The word "app" appears
+• The word "Python" appears
+• The word "React" appears
+
+Always determine what the user wants to DO.
 
 Examples:
 
-"My name is Rick"
+"What is a dashboard?"
 → chat
 
-"Rick is my name"
+"Explain React"
 → chat
 
-"I am Rick and I love AI"
+"What is Python used for?"
 → chat
 
-"I want to learn about Rick's name"
-→ chat
-
-But:
-
-"Find pictures of Rick"
+"Find dashboard designs"
 → search
 
-"Search for Rick"
+"Search for React dashboards"
 → search
 
-"Find a Rick name design"
-→ search
+"Create a dashboard"
+→ coding
+
+"Create a React dashboard"
+→ coding
+
+"Build a website"
+→ coding
+
+"Generate a fitness app"
+→ coding
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

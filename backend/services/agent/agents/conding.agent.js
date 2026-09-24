@@ -6,14 +6,14 @@ export const codingAgent = async (state) => {
     const intentllm = await getModel("intent");
     const llm = await getModel("coding");
 
-    // =========================
-    // INTENT CLASSIFICATION
-    // =========================
+    // =========================================================
+    // 1. INTENT CLASSIFICATION
+    // =========================================================
 
     const intentRes = await intentllm.invoke(`
-You are an intent classifier.
+You are a coding request classifier.
 
-Return ONLY one value:
+Return ONLY ONE value from this list:
 
 CODE_GENERATION
 CODE_REVIEW
@@ -33,162 +33,152 @@ ${state.prompt}
 
     console.log("CODING INTENT:", intent);
 
-    // =========================
-    // CODE GENERATION
-    // =========================
+    // =========================================================
+    // 2. CODE GENERATION
+    // =========================================================
 
     if (intent === "CODE_GENERATION") {
-const prompt = `
-You are CortexAI, an expert frontend developer and UI/UX designer known for bold,
-colorful, premium interfaces — the kind that look like they belong in a design
-awards showcase, not a generic admin template.
+      const prompt = `
+You are CortexAI, an expert frontend developer and UI/UX designer.
 
-Build a visually impressive frontend prototype for the user's request.
+Create a visually impressive frontend prototype for the user's request.
 
-============================================================
+==================================================
 STACK
-============================================================
+==================================================
+
 - HTML
 - CSS
 - Vanilla JavaScript
-- No React, Vue, Next.js, or frameworks unless explicitly requested.
-- No external libraries or icon packs unless absolutely necessary.
-  (If icons are needed, use simple inline SVG or Unicode glyphs — nothing heavy.)
+- Use React/Vue/Next/etc ONLY if explicitly requested.
+- No backend.
+- No database.
+- No authentication.
 
-============================================================
-IMPORTANT
-============================================================
-This is a FRONTEND PROTOTYPE, not a production system.
-Prioritize visual quality, color, and usability over feature quantity.
-A small, gorgeous, colorful interface beats a large plain one every time.
-
-============================================================
-COLOR SYSTEM — THIS IS THE MOST IMPORTANT PART
-============================================================
-Do NOT default to safe grayscale-with-one-accent designs. The UI must feel
-vivid, saturated, and intentional. Pick ONE cohesive palette family below (or
-a clear hybrid) that best fits the user's request, then commit to it fully.
-
-Palette directions to choose from:
-1. "Aurora" — deep indigo/violet background, electric cyan + magenta gradient
-   accents, glowing highlights.
-2. "Sunset Pop" — warm coral, hot pink, amber, and orange gradients over a
-   soft cream or deep plum background.
-3. "Tropical Candy" — teal, lime, and fuchsia on a crisp white or near-black
-   background for high contrast.
-4. "Cyber Neon" — near-black background with neon green, electric blue, and
-   hot pink glow accents, subtle scanline/grid texture via CSS only.
-5. "Playful Pastel Max" — saturated pastel pink, lavender, mint, and
-   sunflower yellow blocks with punchy dark-ink text for contrast.
-Adapt hues to fit context (e.g. finance = jewel tones, kids app = candy
-brights, dev tool = neon-on-dark), but ALWAYS use a multi-color gradient
-system — never a single flat accent color.
-
-Rules:
-- Define a full CSS variable palette in :root: at least 2 background tones,
-  1 surface/card tone, 3-5 accent colors, and a matching gradient pair for
-  each major accent (e.g. --grad-primary: linear-gradient(135deg, var(--accent-1), var(--accent-2))).
-- Every primary button, hero section, active nav item, chart bar, badge, or
-  stat card must use a gradient or vivid solid accent — not plain gray/white.
-- Use color to encode meaning where relevant (status badges, categories,
-  priority tags) with distinct, saturated hues per category.
-- Include at least one glowing/soft-shadow colored effect (colored box-shadow
-  matching the element's accent, not just black shadow).
-- Background should NOT be plain white or plain black — use a subtle gradient,
-  tinted surface, or soft mesh/blob background (pure CSS radial-gradients).
-- Dark or light mode is fine, but either way it must feel rich, not sterile.
-
-============================================================
+==================================================
 DESIGN
-============================================================
-- Premium modern UI, magazine/awards-site quality
-- Strong, deliberate color palette per the system above
-- CSS variables for every color, spacing, radius, and shadow value
-- Gradient accents on buttons, headers, active states, and key stat/data elements
-- Beautiful cards with soft colored shadows and rounded corners (12-24px)
-- Glass/blur effects where appropriate (backdrop-filter) layered over the
-  colorful background so the color shows through
-- Modern, confident typography — one distinctive font pairing (system font
-  stack is fine, but set clear weight/size hierarchy)
-- Responsive layout (mobile-first breakpoints, at least one @media query)
-- Smooth hover/focus transitions (transform + color/shadow, 150-250ms)
-- Subtle entrance animations (fade/slide-in on load, CSS-only is fine)
-- Clean, generous spacing — no cramped UI
-- Strong visual hierarchy: one hero/dominant element per screen
-- Attractive, colorful buttons (gradient fill or vivid solid, clear hover state)
-- Professional but characterful navigation (colored underline/pill on active state)
-- Impressive, color-forward first screen — this is what the user sees first,
-  it must not look like a boilerplate template
+==================================================
 
-============================================================
+The interface must look premium, modern, colorful and polished.
+
+Do NOT create a boring gray admin template.
+
+Use:
+
+- CSS variables
+- Multiple background colors
+- 3-5 accent colors
+- Gradients
+- Rounded cards
+- Soft colored shadows
+- At least one glow effect
+- Modern typography
+- Good spacing
+- Responsive layout
+- Hover effects
+- Subtle animations
+- Strong visual hierarchy
+- Attractive navbar/header
+- Impressive first screen
+
+Choose ONE visual direction:
+
+1. Aurora
+   Indigo + violet + cyan + magenta
+
+2. Sunset
+   Coral + pink + orange + amber
+
+3. Tropical
+   Teal + lime + fuchsia
+
+4. Cyber
+   Dark + neon green + cyan + pink
+
+5. Pastel
+   Pink + lavender + mint + yellow
+
+Use a cohesive palette rather than random colors.
+
+==================================================
 FUNCTIONALITY
-============================================================
-Implement only the most important interactions.
-Use small mock/demo data (5-8 items max for any list/table).
-Use localStorage only when it meaningfully improves the demo (e.g. persisting
-a form, a theme toggle, or a small saved list).
-Avoid complex business logic — this is a prototype, not a real system.
+==================================================
 
-For dashboards/admin systems:
-- Show a dashboard with a colorful header/hero strip
-- Show 3-4 key statistics as vivid gradient stat cards (with a small
-  up/down trend indicator, colored accordingly)
-- Show a small data table or card list (5-8 rows), with colorful status
-  badges per row
-- Add search or filter if useful, styled to match the palette
-- Add ONE simple modal or inline form, styled consistently (not a plain
-  browser-default form)
-- Add basic interactions: hover states, a working filter/search, a toggle,
-  or a simple add/remove action against the mock data
+Build only the important interactions.
+
+Use small mock data.
+
+Maximum 5-8 items for lists/tables.
+
+For dashboards:
+- Hero/header
+- 3-4 colorful statistic cards
+- Small table/list
+- Status badges
+- Search/filter if useful
+- One simple form or modal
 
 For landing pages:
-- Hero section with a bold gradient background or gradient text treatment
-- Features section (3-4 cards, each with a distinct accent color from the
-  palette so the grid itself reads as colorful, not monochrome)
-- Main content section relevant to the request
-- CTA section with strong gradient button and contrasting background
-- Footer, kept simple but on-brand (matching background/accent tones)
+- Hero
+- Features
+- Main content
+- CTA
+- Footer
 
-For portfolios/creative sites:
-- Bold, color-blocked hero
-- Colorful project/work cards with hover lift + glow
-- Distinct accent per project card if showing a grid
+For portfolios:
+- Bold hero
+- Project cards
+- Hover effects
+- Different accent colors
 
-============================================================
+==================================================
 DO NOT
-============================================================
-- Build authentication
-- Build backend APIs
-- Build databases
-- Build complex charts (simple CSS bar/donut visualizations are fine, no
-  charting libraries)
-- Generate huge datasets
-- Generate large or intricate SVGs (simple decorative shapes/blobs are fine)
-- Generate base64 images
-- Generate unnecessary pages
-- Generate unnecessary components
-- Default to a dull, monochrome, "safe corporate gray" palette — this is
-  the single most important failure mode to avoid
-- Add comments everywhere
-- Add placeholder/TODO code
-- Repeat code
+==================================================
 
-============================================================
+- Authentication
+- Backend APIs
+- Database
+- Complex charts
+- Huge datasets
+- Large SVGs
+- Base64 images
+- Unnecessary pages
+- Excessive comments
+- TODO placeholders
+- Repeated code
+- Huge components
+
+Images:
+- Use Unsplash only when images improve the design.
+- Maximum 2 images.
+- Never use placeholder images.
+- Never generate base64 images.
+
+==================================================
 CODE LIMITS
-============================================================
-- index.html: maximum 100 lines
-- style.css: maximum 180 lines (a few extra lines are allowed here
-  specifically to accommodate the richer color/gradient/variable system)
-- script.js: maximum 70 lines
+==================================================
 
-Keep all code compact and complete — no truncation.
+Keep the entire response compact.
 
-============================================================
+index.html: maximum 80 lines
+style.css: maximum 140 lines
+script.js: maximum 50 lines
+
+Prioritize:
+
+1. Visual quality
+2. Color/design
+3. Responsive layout
+4. Core interaction
+5. Completeness
+
+==================================================
 OUTPUT
-============================================================
+==================================================
+
 Return ONLY valid JSON.
 
-Exactly 3 files:
+Exactly this structure:
 
 {
   "files": [
@@ -207,35 +197,24 @@ Exactly 3 files:
   ]
 }
 
-============================================================
-RULES
-============================================================
+Rules:
+
 - No Markdown
 - No code fences
 - No explanation
 - No text outside JSON
-- Every file must contain complete, working code
-- Do not truncate files
-- Keep the entire response compact
-- Prefer CSS (gradients, shadows, variables) over large assets
-- Prefer mock data over complex logic
-- Prefer 3-5 useful, colorful, well-executed features over 15 flat ones
+- All three files must be complete
+- All three files must work together
+- Keep the response compact
+- Do not truncate the JSON
+- Do not add additional files
 
-============================================================
-QUALITY RULE
-============================================================
-Make the first screen look impressive AND colorful — vivid palette,
-confident gradients, visible hierarchy. A reviewer should be able to tell
-at a glance that color was a deliberate design decision, not an afterthought.
-Prioritize design and color quality over application complexity.
+==================================================
+USER REQUEST
+==================================================
 
-USER REQUEST:
 ${state.prompt}
 `;
-
-      // =========================
-      // CODING MODEL CALL
-      // =========================
 
       let res;
 
@@ -273,9 +252,9 @@ ${state.prompt}
         };
       }
 
-      // =========================
-      // CHECK FINISH REASON
-      // =========================
+      // =========================================================
+      // 3. CHECK MODEL FINISH REASON
+      // =========================================================
 
       const finishReason =
         res?.response_metadata?.finish_reason ||
@@ -290,24 +269,26 @@ ${state.prompt}
       console.log("CODING FINISH REASON:", finishReason);
       console.log("CODING OUTPUT TOKENS:", outputTokens);
 
-      // Model stopped because token limit was reached
       if (finishReason === "length") {
         console.error("========== CODING RESPONSE TRUNCATED ==========");
-        console.error("The model reached its output token limit.");
+
+        console.error("The coding model reached its output token limit.");
+
         console.error("Output tokens:", outputTokens);
+
         console.error("===============================================");
 
         return {
           ...state,
           aiResponse:
-            "The coding model stopped before completing the project. Please try again.",
+            "The coding model stopped before completing the project. Please try again with a smaller request.",
           artifacts: [],
         };
       }
 
-      // =========================
-      // EXTRACT MODEL CONTENT
-      // =========================
+      // =========================================================
+      // 4. EXTRACT CONTENT
+      // =========================================================
 
       let text = "";
 
@@ -316,7 +297,10 @@ ${state.prompt}
       } else if (Array.isArray(res?.content)) {
         text = res.content
           .map((item) => {
-            if (typeof item === "string") return item;
+            if (typeof item === "string") {
+              return item;
+            }
+
             return item?.text || "";
           })
           .join("")
@@ -338,9 +322,9 @@ ${state.prompt}
       console.log(text);
       console.log("====================================");
 
-      // =========================
-      // REMOVE MARKDOWN FENCES
-      // =========================
+      // =========================================================
+      // 5. REMOVE MARKDOWN CODE FENCES
+      // =========================================================
 
       text = text
         .replace(/^```json\s*/i, "")
@@ -348,9 +332,9 @@ ${state.prompt}
         .replace(/\s*```$/i, "")
         .trim();
 
-      // =========================
-      // EXTRACT JSON
-      // =========================
+      // =========================================================
+      // 6. FIND JSON
+      // =========================================================
 
       const start = text.indexOf("{");
       const end = text.lastIndexOf("}");
@@ -371,9 +355,9 @@ ${state.prompt}
 
       text = text.substring(start, end + 1);
 
-      // =========================
-      // PARSE JSON
-      // =========================
+      // =========================================================
+      // 7. PARSE JSON
+      // =========================================================
 
       let data;
 
@@ -392,7 +376,9 @@ ${state.prompt}
           console.log("JSON REPAIR SUCCEEDED");
         } catch (repairError) {
           console.error("========== JSON PARSE ERROR ==========");
+
           console.error(repairError?.message);
+
           console.error("======================================");
 
           console.error("BROKEN JSON:");
@@ -407,9 +393,9 @@ ${state.prompt}
         }
       }
 
-      // =========================
-      // VALIDATE FILES
-      // =========================
+      // =========================================================
+      // 8. VALIDATE FILES
+      // =========================================================
 
       if (!data || !Array.isArray(data.files)) {
         console.error("INVALID FILES:", data);
@@ -439,24 +425,27 @@ ${state.prompt}
         };
       }
 
-      // =========================
-      // LOG GENERATED FILES
-      // =========================
+      // =========================================================
+      // 9. LIMIT GENERATED FILES
+      // =========================================================
+
+      const finalFiles = validFiles.slice(0, 3);
 
       console.log("========== GENERATED FILES ==========");
 
-      validFiles.forEach((file, index) => {
+      finalFiles.forEach((file, index) => {
         console.log(`FILE ${index}:`, file.name);
       });
 
       console.log("=====================================");
 
-      // =========================
-      // RETURN ARTIFACT
-      // =========================
+      // =========================================================
+      // 10. RETURN ARTIFACT
+      // =========================================================
 
       return {
         ...state,
+
         aiResponse: "Code Generated Successfully",
 
         artifacts: [
@@ -464,41 +453,40 @@ ${state.prompt}
             id: Date.now(),
             type: "Project",
             title: state.prompt,
-            files: validFiles,
+
+            files: finalFiles,
           },
         ],
       };
     }
 
-    // =========================
-    // OTHER CODING REQUESTS
-    // =========================
+    // =========================================================
+    // 11. OTHER CODING REQUESTS
+    // =========================================================
 
     const prompt = `
-The user's request is:
+You are CortexAI, an expert software engineer.
 
+User request:
+
+${state.prompt}
+
+Intent:
 ${intent}
 
-Return Markdown only.
-
-Do not generate project files.
+Return concise Markdown.
 
 Use:
 
 # Overview
-
 ## Explanation
-
 ## Problems
-
 ## Improvements
-
 ## Best Practices
 
-## Optimized Code
+If code is required, provide only the necessary code.
 
-User Request:
-${state.prompt}
+Do not generate project artifacts unless the user explicitly requests a project.
 `;
 
     let res;
@@ -507,8 +495,10 @@ ${state.prompt}
       res = await llm.invoke(prompt);
     } catch (error) {
       console.error("========== CODING MODEL ERROR ==========");
+
       console.error(error?.message);
       console.error(error?.stack);
+
       console.error("========================================");
 
       return {
@@ -519,6 +509,10 @@ ${state.prompt}
       };
     }
 
+    // =========================================================
+    // 12. EXTRACT NORMAL RESPONSE
+    // =========================================================
+
     let data = "";
 
     if (typeof res?.content === "string") {
@@ -526,7 +520,10 @@ ${state.prompt}
     } else if (Array.isArray(res?.content)) {
       data = res.content
         .map((item) => {
-          if (typeof item === "string") return item;
+          if (typeof item === "string") {
+            return item;
+          }
+
           return item?.text || "";
         })
         .join("");
@@ -538,19 +535,29 @@ ${state.prompt}
 
     return {
       ...state,
+
       aiResponse: data || "No response generated.",
+
       artifacts: [],
     };
   } catch (error) {
+    // =========================================================
+    // 13. GLOBAL ERROR
+    // =========================================================
+
     console.error("========== CODING AGENT ERROR ==========");
+
     console.error(error?.message);
     console.error(error?.stack);
+
     console.error("=========================================");
 
     return {
       ...state,
+
       aiResponse:
         "The coding agent encountered an unexpected error. Please try again.",
+
       artifacts: [],
     };
   }

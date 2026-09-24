@@ -27,7 +27,7 @@ function Home() {
 
         console.log(response.data);
 
-        dispatch(setUserData(response.data.user));
+        dispatch(setUserData(response.data));
       } catch (error) {
         console.log("No logged-in user");
         dispatch(setUserData(null));
@@ -53,7 +53,7 @@ function Home() {
       console.log("ME USER:", response.data.user);
 
       // 3. Immediately update Redux
-      dispatch(setUserData(response.data.user));
+      dispatch(setUserData(response.data));
 
       console.log("USER STORED IN REDUX");
     } catch (error) {

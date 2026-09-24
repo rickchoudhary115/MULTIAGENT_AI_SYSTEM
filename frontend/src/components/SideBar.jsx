@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import {
-Coins,
-LogOut,
-MessageSquare,
-PanelLeftIcon,
-PanelRight,
-PenSquare,
-Plus,
-User,
+  Coins,
+  LogOut,
+  MessageSquare,
+  PanelLeftIcon,
+  PanelRight,
+  PenSquare,
+  Plus,
+  User,
 } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getConversations } from "../features/getConversations";
 
 import {
-addConversation,
-setConversation,
-setSelectedConversation,
+  addConversation,
+  setConversation,
+  setSelectedConversation,
 } from "../redux/conversationSlice";
 
 import { setUserData } from "../redux/userSlice";
@@ -32,56 +32,54 @@ import { setmessage } from "../redux/messageSlice";
 import getMessages from "../features/getMessages";
 
 function SideBar() {
-const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-const [imageError, setImageError] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-const { conversations, selectedConversation } = useSelector(
-(state) => state.conversation,
-);
+  const { conversations, selectedConversation } = useSelector(
+    (state) => state.conversation,
+  );
 
-const { userData } = useSelector((state) => state.user);
+  const { userData } = useSelector((state) => state.user);
 
-const user = userData?.user;
+  const user = userData?.user;
 
-useEffect(() => {
-const getConv = async () => {
-const data = await getConversations();
+  useEffect(() => {
+    const getConv = async () => {
+      if (!user?.userId) return;
 
+      try {
+        const data = await getConversations();
 
-  dispatch(setConversation(data));
-};
+        dispatch(setConversation(data));
+      } catch (error) {
+        console.error("Failed to load conversations:", error);
+      }
+    };
 
-getConv();
+    getConv();
+  }, [user?.userId]);
 
+  const handleCreateConversation = async () => {
+    const data = await createConversation();
 
-}, [user?.userId]);
+    dispatch(addConversation(data));
+  };
 
-const handleCreateConversation = async () => {
-const data = await createConversation();
+  const handleSelectConversation = async (conv) => {
+    dispatch(setSelectedConversation(conv));
 
+    const messages = await getMessages(conv?._id);
 
-dispatch(addConversation(data));
+    dispatch(setmessage(messages));
+  };
 
-
-};
-
-const handleSelectConversation = async (conv) => {
-dispatch(setSelectedConversation(conv));
-
-
-const messages = await getMessages(conv?._id);
-
-dispatch(setmessage(messages));
-
-
-};
-
-if (collapsed) {
-return ( <div
-     className="
+  if (collapsed) {
+    return (
+      <div
+        className="
        hidden lg:flex
        flex-col
        items-center
@@ -95,11 +93,11 @@ return ( <div
        shrink-0
        shadow-[8px_0_30px_rgba(0,0,0,0.12)]
      "
-   >
-{/* ================= COLLAPSED HEADER ================= */}
+      >
+        {/* ================= COLLAPSED HEADER ================= */}
 
-    <button
-      className="
+        <button
+          className="
         flex
         items-center
         justify-center
@@ -118,13 +116,13 @@ return ( <div
         cursor-pointer
         mb-1
       "
-      onClick={() => setCollapsed(false)}
-    >
-      <PanelRight size={17} strokeWidth={1.8} />
-    </button>
+          onClick={() => setCollapsed(false)}
+        >
+          <PanelRight size={17} strokeWidth={1.8} />
+        </button>
 
-    <button
-      className="
+        <button
+          className="
         flex
         items-center
         justify-center
@@ -142,15 +140,15 @@ return ( <div
         bg-transparent
         cursor-pointer
       "
-      onClick={() => dispatch(setSelectedConversation(null))}
-    >
-      <Plus size={17} strokeWidth={1.8} />
-    </button>
+          onClick={() => dispatch(setSelectedConversation(null))}
+        >
+          <Plus size={17} strokeWidth={1.8} />
+        </button>
 
-    {/* ================= COLLAPSED CONVERSATIONS ================= */}
+        {/* ================= COLLAPSED CONVERSATIONS ================= */}
 
-    <div
-      className="
+        <div
+          className="
         flex-1
         w-full
         overflow-y-auto
@@ -160,18 +158,15 @@ return ( <div
         [scrollbar-width:none]
         [&::-webkit-scrollbar]:hidden
       "
-    >
-      {conversations.map((conv) => {
-        const isActive =
-          selectedConversation?._id == conv?._id;
+        >
+          {conversations.map((conv) => {
+            const isActive = selectedConversation?._id == conv?._id;
 
-        return (
-          <div
-            key={conv?._id}
-            onClick={() =>
-              dispatch(setSelectedConversation(conv))
-            }
-            className={`
+            return (
+              <div
+                key={conv?._id}
+                onClick={() => dispatch(setSelectedConversation(conv))}
+                className={`
               group
               flex
               items-center
@@ -199,9 +194,9 @@ return ( <div
                   `
               }
             `}
-          >
-            <div
-              className={`
+              >
+                <div
+                  className={`
                 flex
                 items-center
                 justify-center
@@ -217,20 +212,20 @@ return ( <div
                     : "bg-white/[0.04] text-slate-600 group-hover:text-slate-400"
                 }
               `}
-            >
-              <MessageSquare size={13} strokeWidth={1.8} />
-            </div>
-          </div>
-        );
-      })}
-    </div>
+                >
+                  <MessageSquare size={13} strokeWidth={1.8} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-    {/* ================= COLLAPSED USER ================= */}
+        {/* ================= COLLAPSED USER ================= */}
 
-    <div className="relative shrink-0 mt-2">
-      {user?.avatar && !imageError ? (
-        <img
-          className="
+        <div className="relative shrink-0 mt-2">
+          {user?.avatar && !imageError ? (
+            <img
+              className="
             w-9
             h-9
             rounded-xl
@@ -240,13 +235,13 @@ return ( <div
             shadow-md
             shadow-indigo-500/10
           "
-          src={user?.avatar}
-          alt="User avatar"
-          onError={() => setImageError(true)}
-        />
-      ) : (
-        <div
-          className="
+              src={user?.avatar}
+              alt="User avatar"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div
+              className="
             w-9
             h-9
             rounded-xl
@@ -257,19 +252,18 @@ return ( <div
             border
             border-white/[0.06]
           "
-        >
-          <User size={15} className="text-slate-400" />
+            >
+              <User size={15} className="text-slate-400" />
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  </div>
-);
+      </div>
+    );
+  }
 
-
-}
-
-return ( <div
-   className="
+  return (
+    <div
+      className="
      fixed
      lg:static
      inset-y-0
@@ -283,13 +277,13 @@ return ( <div
      border-white/[0.06]
      shadow-[8px_0_30px_rgba(0,0,0,0.12)]
    "
- > <div className="flex flex-col py-3 h-full">
+    >
+      {" "}
+      <div className="flex flex-col py-3 h-full">
+        {/* ================= HEADER ================= */}
 
-
-    {/* ================= HEADER ================= */}
-
-    <div
-      className="
+        <div
+          className="
         flex
         items-center
         gap-2.5
@@ -298,9 +292,9 @@ return ( <div
         border-b
         border-white/[0.06]
       "
-    >
-      <div
-        className="
+        >
+          <div
+            className="
           hidden
           lg:flex
           items-center
@@ -318,14 +312,14 @@ return ( <div
           duration-200
           cursor-pointer
         "
-        onClick={() => setCollapsed(true)}
-      >
-        <PanelLeftIcon size={16} strokeWidth={1.8} />
-      </div>
+            onClick={() => setCollapsed(true)}
+          >
+            <PanelLeftIcon size={16} strokeWidth={1.8} />
+          </div>
 
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <div
-          className="
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div
+              className="
             w-7
             h-7
             rounded-lg
@@ -336,22 +330,22 @@ return ( <div
             shadow-md
             shadow-indigo-500/20
           "
-        />
+            />
 
-        <span
-          className="
+            <span
+              className="
             text-[16px]
             font-semibold
             text-slate-100
             tracking-tight
           "
-        >
-          CortexAi
-        </span>
-      </div>
+            >
+              CortexAi
+            </span>
+          </div>
 
-      <span
-        className="
+          <span
+            className="
           text-[9px]
           font-semibold
           text-indigo-300
@@ -364,12 +358,12 @@ return ( <div
           tracking-wider
           uppercase
         "
-      >
-        Free
-      </span>
+          >
+            Free
+          </span>
 
-      <button
-        className="
+          <button
+            className="
           flex
           items-center
           justify-center
@@ -387,19 +381,17 @@ return ( <div
           bg-transparent
           cursor-pointer
         "
-        onClick={() =>
-          dispatch(setSelectedConversation(null))
-        }
-      >
-        <PenSquare size={15} strokeWidth={1.8} />
-      </button>
-    </div>
+            onClick={() => dispatch(setSelectedConversation(null))}
+          >
+            <PenSquare size={15} strokeWidth={1.8} />
+          </button>
+        </div>
 
-    {/* ================= NEW CHAT ================= */}
+        {/* ================= NEW CHAT ================= */}
 
-    <div className="px-4 pt-4 pb-2">
-      <button
-        className="
+        <div className="px-4 pt-4 pb-2">
+          <button
+            className="
           w-full
           flex
           items-center
@@ -426,20 +418,18 @@ return ( <div
           transition-all
           duration-200
         "
-        onClick={() =>
-          dispatch(setSelectedConversation(null))
-        }
-      >
-        <Plus size={15} strokeWidth={2} />
-        New Chat
-      </button>
-    </div>
+            onClick={() => dispatch(setSelectedConversation(null))}
+          >
+            <Plus size={15} strokeWidth={2} />
+            New Chat
+          </button>
+        </div>
 
-    {/* ================= SECTION TITLE ================= */}
+        {/* ================= SECTION TITLE ================= */}
 
-    {conversations.length == 0 ? (
-      <div
-        className="
+        {conversations.length == 0 ? (
+          <div
+            className="
           px-5
           pt-4
           pb-2
@@ -449,12 +439,12 @@ return ( <div
           tracking-[0.16em]
           text-slate-600
         "
-      >
-        No Recent Conversation
-      </div>
-    ) : (
-      <div
-        className="
+          >
+            No Recent Conversation
+          </div>
+        ) : (
+          <div
+            className="
           px-5
           pt-4
           pb-2
@@ -464,15 +454,15 @@ return ( <div
           tracking-[0.16em]
           text-slate-600
         "
-      >
-        Recents
-      </div>
-    )}
+          >
+            Recents
+          </div>
+        )}
 
-    {/* ================= CONVERSATIONS ================= */}
+        {/* ================= CONVERSATIONS ================= */}
 
-    <div
-      className="
+        <div
+          className="
         flex-1
         overflow-y-auto
         px-2.5
@@ -480,16 +470,15 @@ return ( <div
         [scrollbar-width:none]
         [&::-webkit-scrollbar]:hidden
       "
-    >
-      {conversations.map((conv) => {
-        const isActive =
-          selectedConversation?._id == conv?._id;
+        >
+          {conversations.map((conv) => {
+            const isActive = selectedConversation?._id == conv?._id;
 
-        return (
-          <div
-            key={conv?._id}
-            onClick={() => handleSelectConversation(conv)}
-            className={`
+            return (
+              <div
+                key={conv?._id}
+                onClick={() => handleSelectConversation(conv)}
+                className={`
               group
               flex
               items-center
@@ -517,9 +506,9 @@ return ( <div
                   `
               }
             `}
-          >
-            <div
-              className={`
+              >
+                <div
+                  className={`
                 flex
                 items-center
                 justify-center
@@ -535,15 +524,12 @@ return ( <div
                     : "bg-white/[0.04] text-slate-600 group-hover:bg-white/[0.06] group-hover:text-slate-400"
                 }
               `}
-            >
-              <MessageSquare
-                size={13}
-                strokeWidth={1.8}
-              />
-            </div>
+                >
+                  <MessageSquare size={13} strokeWidth={1.8} />
+                </div>
 
-            <span
-              className={`
+                <span
+                  className={`
                 text-[13px]
                 font-medium
                 truncate
@@ -555,18 +541,18 @@ return ( <div
                     : "text-slate-400 group-hover:text-slate-200"
                 }
               `}
-            >
-              {conv?.title || "New Chat"}
-            </span>
-          </div>
-        );
-      })}
-    </div>
+                >
+                  {conv?.title || "New Chat"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
 
-    {/* ================= USER PROFILE ================= */}
+        {/* ================= USER PROFILE ================= */}
 
-    <div
-      className="
+        <div
+          className="
         mx-2.5
         mb-1
         rounded-2xl
@@ -575,11 +561,11 @@ return ( <div
         bg-white/[0.025]
         shadow-inner
       "
-    >
-      <div className="px-3 py-3">
-        {user ? (
-          <div
-            className="
+        >
+          <div className="px-3 py-3">
+            {user ? (
+              <div
+                className="
               flex
               items-center
               gap-2.5
@@ -591,13 +577,13 @@ return ( <div
               transition-colors
               duration-150
             "
-          >
-            {/* AVATAR */}
+              >
+                {/* AVATAR */}
 
-            <div className="relative shrink-0">
-              {user?.avatar && !imageError ? (
-                <img
-                  className="
+                <div className="relative shrink-0">
+                  {user?.avatar && !imageError ? (
+                    <img
+                      className="
                     w-9
                     h-9
                     rounded-xl
@@ -607,13 +593,13 @@ return ( <div
                     shadow-md
                     shadow-indigo-500/10
                   "
-                  src={user?.avatar}
-                  alt="User avatar"
-                  onError={() => setImageError(true)}
-                />
-              ) : (
-                <div
-                  className="
+                      src={user?.avatar}
+                      alt="User avatar"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <div
+                      className="
                     w-9
                     h-9
                     rounded-xl
@@ -624,56 +610,53 @@ return ( <div
                     border
                     border-white/[0.07]
                   "
-                >
-                  <User
-                    size={15}
-                    className="text-slate-400"
-                  />
+                    >
+                      <User size={15} className="text-slate-400" />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* USER DETAILS */}
+                {/* USER DETAILS */}
 
-            <div className="min-w-0 flex-1">
-              <p
-                className="
+                <div className="min-w-0 flex-1">
+                  <p
+                    className="
                   text-[13px]
                   font-medium
                   text-slate-100
                   truncate
                 "
-              >
-                {user?.name || "user"}
-              </p>
+                  >
+                    {user?.name || "user"}
+                  </p>
 
-              <p
-                className="
+                  <p
+                    className="
                   text-[10px]
                   text-indigo-400/80
                   mt-0.5
                 "
-              >
-                {"Free Plan"}
-              </p>
+                  >
+                    {"Free Plan"}
+                  </p>
 
-              <p
-                className="
+                  <p
+                    className="
                   text-[11px]
                   text-slate-600
                   truncate
                   mt-0.5
                 "
-              >
-                {user?.email}
-              </p>
-            </div>
+                  >
+                    {user?.email}
+                  </p>
+                </div>
 
-            {/* ACTIONS */}
+                {/* ACTIONS */}
 
-            <div className="flex items-center gap-0.5">
-              <button
-                className="
+                <div className="flex items-center gap-0.5">
+                  <button
+                    className="
                   flex
                   items-center
                   justify-center
@@ -691,12 +674,12 @@ return ( <div
                   transition-all
                   duration-150
                 "
-              >
-                <Coins size={15} strokeWidth={1.8} />
-              </button>
+                  >
+                    <Coins size={15} strokeWidth={1.8} />
+                  </button>
 
-              <button
-                className="
+                  <button
+                    className="
                   flex
                   items-center
                   justify-center
@@ -714,18 +697,18 @@ return ( <div
                   transition-all
                   duration-150
                 "
-                onClick={() => {
-                  logOut();
-                  dispatch(setUserData(null));
-                }}
-              >
-                <LogOut size={15} strokeWidth={1.8} />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            className="
+                    onClick={() => {
+                      logOut();
+                      dispatch(setUserData(null));
+                    }}
+                  >
+                    <LogOut size={15} strokeWidth={1.8} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="
               w-full
               flex
               items-center
@@ -745,17 +728,15 @@ return ( <div
               transition-all
               duration-200
             "
-          >
-            Login
-          </button>
-        )}
+              >
+                Login
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
-
-);
+  );
 }
 
 export default SideBar;

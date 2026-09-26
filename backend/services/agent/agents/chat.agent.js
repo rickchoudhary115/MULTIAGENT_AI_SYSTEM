@@ -8,7 +8,9 @@ import { getModel } from "../config/llmModel.js";
 import { getMemory } from "../config/memory.js";
 
 export const chatAgent = async (state) => {
-  const llm = await getModel("chat");
+
+  try {
+    const llm = await getModel("chat");
 
   const history = (await getMemory(state.conversationId)) || []
   const limitedHistory = history.slice(-4).map((msg) => ({
@@ -71,4 +73,12 @@ Formatting:
     ...state,
     aiResponse: response.content,
   };
-};
+}catch (error) {
+    return {
+      ...state,
+      aiResponse: `
+      ❌ Failed to generate response.
+      `,
+    };
+  }
+}

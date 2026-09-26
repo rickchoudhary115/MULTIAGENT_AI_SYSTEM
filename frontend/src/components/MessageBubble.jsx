@@ -638,7 +638,10 @@ function MessageBubble({ role, content, images = [] }) {
 
               /* ================= MARKDOWN IMAGE ================= */
 
-              img: ({ src, alt }) => (
+              img: ({ src, alt }) => 
+               { if(!src)return null;
+
+                return(
                 <img
                   src={src}
                   alt={alt || "Image"}
@@ -661,7 +664,7 @@ function MessageBubble({ role, content, images = [] }) {
                     duration-300
                   "
                 />
-              ),
+              )},
             }}
           >
             {content}

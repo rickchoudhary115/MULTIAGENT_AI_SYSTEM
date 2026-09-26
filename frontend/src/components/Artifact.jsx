@@ -1,4 +1,5 @@
 import {
+  Check,
   Code2,
   Copy,
   Eye,
@@ -15,7 +16,9 @@ function Artifact() {
   const { artifacts = [] } = useSelector((state) => state.message);
   const [tab, setTab] = useState("code");
   const [activeFile, setActiveFile] = useState(0);
+  const [copied,setCopied] =useState(false)
   if (artifacts.length === 0) return;
+ 
   const artifact = artifacts[0];
   const file = artifact?.files[activeFile]
   const htmlFile=artifact?.files.find(f=>f.name==="index.html")
@@ -43,7 +46,19 @@ function Artifact() {
 </body>
 </html>
   `;
+ const handleCopy = async () => {
+   try {
+     await navigator.clipboard.writeText(file?.content || "");
 
+     setCopied(true);
+
+     setTimeout(() => {
+       setCopied(false);
+     }, 2000);
+   } catch (error) {
+     console.error("COPY ERROR:", error);
+   }
+ };
 
   const detectLanguage=(fileName="")=>{
     const name=fileName.toLowerCase()
@@ -132,12 +147,14 @@ function Artifact() {
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button
+                onClick={handleCopy}
                   className="flex items-center gap-1.5 px-2.5 py-1.5 font-medium  rounded-lg
             text-slate-500 hover:text-slate-200 hover:bg-white/[0.05]
             transition-colors duration-150 bg-transparent border-none
             cursor-pointer"
                 >
-                  <Copy size={15} />
+                  {copied ? <Check size={15} /> : <Copy size={15} />}
+                 
                 </button>
               </div>
               {canPreview && (
@@ -212,9 +229,18 @@ function Artifact() {
                   theme="vs-dark"
                   language={detectLanguage(file?.name)}
                   value={file?.content}
-                  options={{readOnly:true,minimap:{enabled:false}, fontSize:13,wordWrap:"on",automaticLayout:true,scrollBeyondLastLine:false ,padding:{top:16},lineNumbers:"on",renderLineHighlight:"none"}}
+                  options={{
+                    readOnly: true,
+                    minimap: { enabled: false },
+                    fontSize: 13,
+                    wordWrap: "on",
+                    automaticLayout: true,
+                    scrollBeyondLastLine: false,
+                    padding: { top: 16 },
+                    lineNumbers: "on",
+                    renderLineHighlight: "none",
+                  }}
                 />
-                
               </motion.div>
             )}
           </div>

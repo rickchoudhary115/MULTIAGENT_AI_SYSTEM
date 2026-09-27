@@ -1,43 +1,53 @@
 
 import { getModel } from "../config/llmModel.js";
 import { generatePpt } from "../utils/generatePpt.js";
+import { uploadToS3 } from "../utils/uploadToS3.js";
+import { getFromS3 } from "../utils/getFromS3.js";
 
 export const pptAgent = async (state) => {
   try {
     const llm = await getModel("ppt");
 
-    const prompt = `
-You are an expert AI presentation-generation agent.
+const prompt = `
+You are an expert AI presentation designer and PowerPoint content generation agent.
 
-Your task is to transform the user's request into a complete, professional PowerPoint presentation.
+Your task is to transform the user's request into a complete, professional, logically structured PowerPoint presentation.
 
-Requirements:
-1. Understand the user's topic, purpose, and target audience.
-2. Create a logical slide structure with a clear beginning, middle, and conclusion.
-3. Generate 8–12 slides unless the user specifies a different number.
-4. Each slide must contain:
-   - A concise title
-   - Clear, useful content
-   - 3–6 bullet points where appropriate
-   - Speaker notes when they add value
-5. Avoid overcrowding slides with excessive text.
+PRESENTATION REQUIREMENTS:
+
+1. Generate 8–12 slides unless the user explicitly requests a different number.
+2. Create a clear presentation title and optional subtitle.
+3. Every slide must have a short, meaningful title.
+4. Each content slide should contain 3–6 concise bullet points.
+5. Each bullet point should communicate one useful idea in 1–2 sentences maximum.
 6. Use professional, presentation-friendly language.
-7. Include examples, statistics, comparisons, processes, or use cases when relevant.
-8. Add a conclusion/summary slide.
-9. Add a Q&A slide at the end.
-10. Maintain consistent terminology and structure throughout the presentation.
+7. Avoid paragraphs, unnecessary repetition, filler content, and overly long explanations.
+8. Organize the presentation with a logical flow:
+   - Introduction / Overview
+   - Background or Problem
+   - Key Concepts
+   - Main Details
+   - Examples / Applications / Use Cases
+   - Comparison / Process / Architecture when relevant
+   - Benefits / Challenges when relevant
+   - Conclusion / Summary
+   - Q&A
+9. Adapt the structure to the user's topic. Do not force irrelevant sections.
+10. Include practical examples, real-world applications, comparisons, workflows, or use cases whenever they improve understanding.
+11. For technical topics, include architecture, workflow, components, technologies, or implementation concepts when relevant.
+12. For business topics, include objectives, market/application context, benefits, challenges, and use cases when relevant.
+13. For educational topics, explain concepts progressively from basic to advanced.
+14. Keep terminology consistent throughout the presentation.
+15. Do not invent statistics, research findings, citations, company claims, or specific facts unless they are provided by the user or are well-established general knowledge.
+16. The final slide must be a Q&A slide.
+17. Do not include speaker notes, Markdown, HTML, code fences, or explanations outside the JSON.
+18. Return ONLY a valid JSON object.
+19. The JSON must be directly parseable using JSON.parse().
+20. Escape all double quotes inside JSON string values properly.
+21. Do not use trailing commas.
+22. Do not include comments inside the JSON.
 
-For every slide, return:
-- slide number
-- slide title
-- slide content
-- speaker notes
-- suggested visual type
-- suggested visual description
-
-If the topic requires diagrams, charts, timelines, workflows, architecture diagrams, or tables, explicitly describe them so they can be created in the presentation.
-
-Return ONLY valid JSON in the following format:
+OUTPUT FORMAT:
 
 {
   "title": "Presentation Title",
@@ -47,24 +57,28 @@ Return ONLY valid JSON in the following format:
       "slideNumber": 1,
       "title": "Slide Title",
       "content": [
-        "Point 1",
-        "Point 2",
-        "Point 3"
-      ],
-      "speakerNotes": "Speaker notes for this slide.",
-      "visual": {
-        "type": "diagram | chart | image | table | timeline | none",
-        "description": "Description of the visual."
-      }
+        "Concise point 1",
+        "Concise point 2",
+        "Concise point 3"
+      ]
     }
   ]
 }
 
-User request:
+IMPORTANT:
+- slideNumber must start at 1 and increment sequentially.
+- Generate the requested number of slides.
+- The last slide must be titled "Q&A" or "Questions & Discussion".
+- Every slide except the Q&A slide should contain meaningful content.
+- Keep bullet points concise enough to fit comfortably on a PowerPoint slide.
+- Never return anything before or after the JSON object.
+
+USER REQUEST:
 ${state.prompt}
 `;
 
     const res = await llm.invoke(prompt);
+
     const data = JSON.parse(res.content);
 
     const ppt = await generatePpt(data);
@@ -74,35 +88,26 @@ ${state.prompt}
     });
 
     const filename = `ppt-${Date.now()}.pptx`;
-  
-//    // Upload to S3
-//    await uploadToS3(
-//      filename,
-//      buffer,
-//      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-//    );
 
-//    // Generate temporary download URL
-//    const downloadUrl = await getFromS3(filename, 24 * 60 * 60);
+    await uploadToS3(
+      filename,
+      buffer,
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    );
 
-//    return {
-//      ...state,
+    const downloadUrl = await getFromS3(
+      filename,
+      24 * 60 
+    );
 
-//      pptBuffer: buffer,
-//      pptUrl: downloadUrl,
-//      pptFilename: filename,
-
-//      aiResponse: `📊 PPT Generated Successfully
-
-// ${data.title}
-
-// Download: ${downloadUrl}`,
-//    };
     return {
       ...state,
       pptBuffer: buffer,
       pptFilename: filename,
-      aiResponse: `📊 PPT Generated Successfully\n\n${data.title}`
+      pptUrl: downloadUrl,
+      aiResponse: `📊 PPT Generated Successfully
+      **${data.title}**
+      Download: ${downloadUrl}`
     };
 
   } catch (error) {

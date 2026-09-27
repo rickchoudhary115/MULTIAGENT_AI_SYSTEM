@@ -1,90 +1,50 @@
 
 import { getModel } from "../config/llmModel.js";
 import axios from "axios";
-
-// import { uploadToS3, getFromS3 } from "../utils/s3.js";
+import { uploadToS3 } from "../utils/uploadToS3.js";
+import { getFromS3 } from "../utils/getFromS3.js";
 
 export const visionAgent = async (state) => {
   try {
     console.log("🖼️ IMAGE AGENT STARTED");
     console.log("👤 User prompt:", state.prompt);
 
-    // =====================================================
-    // 1. Generate detailed image prompt using LLM
-    // =====================================================
-
     const llm = await getModel("image");
 
-    const res = await llm.invoke(`
-You are an expert AI image prompt engineer specializing in high-quality image generation.
+const res = await llm.invoke(`
+You are an expert AI image prompt engineer specializing in professional image-generation prompts.
 
-Transform the user's request into ONE detailed prompt suitable for a modern image-generation model.
+Your task is to transform the user's request into ONE highly detailed, visually coherent prompt suitable for a modern text-to-image generation model.
 
-Rules:
+PROMPT REQUIREMENTS:
 
-1. Preserve the user's exact subject, intent, objects, and requested style.
+1. Preserve the user's exact subject, intent, requested objects, environment, and visual style.
+2. Never change the main subject or the user's intended meaning.
+3. Add useful visual details only when they improve the requested image.
+4. Describe the main subject clearly, including appearance, pose, expression, clothing, materials, shape, or physical characteristics when relevant.
+5. Describe the environment, background, setting, and surrounding elements when relevant.
+6. Define a suitable composition, framing, perspective, camera angle, and subject placement.
+7. Specify appropriate lighting, shadows, highlights, reflections, textures, atmosphere, and depth.
+8. Use cinematic lighting and professional composition when they fit the user's requested style.
+9. Adapt the artistic style to the user's request, such as photorealistic, cinematic, anime, illustration, 3D render, watercolor, oil painting, cyberpunk, minimal, fantasy, etc.
+10. Maintain visual consistency between the subject, environment, lighting, colors, materials, and perspective.
+11. Add realistic depth of field, lens characteristics, shadows, reflections, and atmospheric effects only when appropriate.
+12. Use a suitable color palette that complements the requested subject and style.
+13. Do not introduce unrelated people, objects, locations, characters, or concepts.
+14. Do not change important attributes specified by the user.
+15. Do not add text, captions, typography, logos, signatures, watermarks, UI elements, or written content unless explicitly requested.
+16. Do not add unnecessary negative prompts.
+17. Do not repeat generic quality keywords such as "masterpiece", "8K", "ultra HD", or "high quality" repeatedly.
+18. Do not mention the image-generation model, API, prompt engineering, or these instructions.
+19. Return exactly ONE complete image-generation prompt.
+20. Do not return JSON, Markdown, bullet points, explanations, or multiple prompt variations.
 
-2. Expand the request with useful visual details:
-   - subject appearance
-   - environment
-   - background
-   - composition
-   - camera angle
-   - framing
-   - lighting
-   - color palette
-   - textures
-   - materials
-   - atmosphere
-   - depth
-   - perspective
+OUTPUT:
+Return ONLY the final image-generation prompt as plain text.
 
-3. Make the scene visually coherent and realistic.
-
-4. Use cinematic lighting and professional composition when appropriate.
-
-5. Use realistic shadows, reflections, textures, and depth of field when appropriate.
-
-6. Use camera terminology when useful:
-   - 35mm
-   - 50mm
-   - 85mm
-   - shallow depth of field
-   - bokeh
-   - cinematic framing
-   - realistic exposure
-   - soft natural lighting
-
-7. Adapt the visual style to the user's request.
-   For example:
-   - If the user asks for anime, create an anime-style prompt.
-   - If the user asks for a 3D render, create a 3D-render prompt.
-   - If the user asks for a painting, create a painting-style prompt.
-   - If the user asks for a photograph, create a photorealistic photography prompt.
-
-8. Do NOT add unrelated objects, people, locations, or concepts.
-
-9. Do NOT add text, captions, logos, signatures, watermarks, or UI elements unless explicitly requested.
-
-10. Do NOT repeat meaningless quality keywords such as:
-   "8K, 16K, masterpiece, best quality"
-   over and over.
-
-11. Make the final prompt descriptive but not unnecessarily repetitive.
-
-12. Return ONLY the final image-generation prompt.
-Do not explain the prompt.
-Do not add headings.
-Do not use quotation marks around the prompt.
-
-User request:
-
+USER REQUEST:
 ${state.prompt}
 `);
-
-    // =====================================================
-    // 2. Extract generated prompt
-    // =====================================================
 
     const prompt =
       typeof res.content === "string"
@@ -95,20 +55,10 @@ ${state.prompt}
     console.log(prompt);
 
     if (!prompt) {
-      throw new Error(
-        "Image prompt generation returned an empty result"
-      );
+      throw new Error("Image prompt generation returned an empty result");
     }
 
-    // =====================================================
-    // 3. Encode prompt
-    // =====================================================
-
     const encodedPrompt = encodeURIComponent(prompt);
-
-    // =====================================================
-    // 4. Generate image with Pollinations
-    // =====================================================
 
     const imageUrl =
       `https://image.pollinations.ai/prompt/${encodedPrompt}` +
@@ -119,10 +69,6 @@ ${state.prompt}
     console.log("\n🔗 IMAGE URL:");
     console.log(imageUrl);
 
-    // =====================================================
-    // 5. Request image
-    // =====================================================
-
     const imageRes = await axios.get(imageUrl, {
       responseType: "arraybuffer",
       timeout: 120000,
@@ -131,27 +77,6 @@ ${state.prompt}
     console.log("\n✅ IMAGE GENERATED SUCCESSFULLY");
     console.log("📦 Image size:", imageRes.data.length, "bytes");
 
-    // =====================================================
-    // 6. Return image URL to frontend
-    // =====================================================
-
-    return {
-      ...state,
-
-      aiResponse: `
- 
-      IMAGE GENERATED SUCCESSFULLY
-      `,
-
-      images: [imageUrl],
-    };
-
-    // =====================================================
-    // S3 VERSION
-    // Enable this later after direct generation works
-    // =====================================================
-
-    /*
     const buffer = Buffer.from(imageRes.data);
 
     const filename = `image-${Date.now()}.png`;
@@ -162,60 +87,31 @@ ${state.prompt}
       "image/png"
     );
 
+    console.log("☁️ IMAGE UPLOADED TO S3");
+
     const downloadUrl = await getFromS3(
       filename,
-      24 * 60 * 60
+      24 * 60 
     );
 
+    console.log("🔗 S3 DOWNLOAD URL:");
+    console.log(downloadUrl);
+
     return {
       ...state,
-
-      aiResponse: `
-![Generated Image](${downloadUrl})
-
-📩 [Download Image](${downloadUrl})
-
-⌛ Link expires in 24 hours.
-      `.trim(),
-
-      images: [downloadUrl],
+      aiResponse: `🖼️ Image Generated Successfully\n\n${downloadUrl}`,
+      
     };
-    */
+
   } catch (error) {
-    // =====================================================
-    // ERROR HANDLING
-    // =====================================================
+    console.error("\n❌ IMAGE GENERATION FAILED:", error);
 
-    console.error("\n❌ IMAGE GENERATION FAILED");
 
-    console.error("Message:", error.message);
-
-    if (error.response) {
-      console.error(
-        "Status:",
-        error.response.status
-      );
-
-      console.error(
-        "Headers:",
-        error.response.headers
-      );
-
-      console.error(
-        "Response:",
-        error.response.data
-      );
-    }
 
     return {
       ...state,
-
-      aiResponse: `❌ Failed to generate image.
-
-Error: ${error.message}`,
-
+      aiResponse: `❌ Failed to generate image.\nError: ${error.message}`,
       images: [],
     };
   }
 };
-

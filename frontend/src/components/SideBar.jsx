@@ -30,6 +30,7 @@ import logOut from "../features/logOut";
 import { setmessage } from "../redux/messageSlice";
 
 import getMessages from "../features/getMessages";
+import BillingDrawer from "./BillingDrawer";
 
 function SideBar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,6 +38,7 @@ function SideBar() {
   const dispatch = useDispatch();
 
   const [imageError, setImageError] = useState(false);
+  const [showBilling, setShowBilling] = useState(false);
 
   const { conversations, selectedConversation } = useSelector(
     (state) => state.conversation,
@@ -656,6 +658,7 @@ function SideBar() {
 
                 <div className="flex items-center gap-0.5">
                   <button
+                  onClick={()=>setShowBilling(true)}
                     className="
                   flex
                   items-center
@@ -734,6 +737,10 @@ function SideBar() {
             )}
           </div>
         </div>
+        <BillingDrawer
+        open={showBilling}
+        onClose={()=>setShowBilling(false)}
+        />
       </div>
     </div>
   );

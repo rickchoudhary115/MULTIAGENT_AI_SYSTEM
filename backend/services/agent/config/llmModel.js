@@ -11,10 +11,9 @@ const groq = new ChatGroq({
   temperature: 0,
 });
 const gemini = new ChatGoogleGenerativeAI({
-  model: "gemini-2.5-flash",
+  model: "gemini-3.5-flash", // stable choice
   temperature: 0,
 });
-
 const openrouter = new ChatOpenAI({
   model: "nvidia/nemotron-3-ultra-550b-a55b:free",
 
@@ -44,6 +43,9 @@ export const getModel = (agent) => {
 
     case "coding":
       return openrouter;
+
+    case "imageAnalyzer":
+      return gemini;
 
     case "intent":
       return groq;

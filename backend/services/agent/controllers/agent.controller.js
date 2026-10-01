@@ -4,7 +4,8 @@ import { addMessage } from "../config/memory.js";
 export const agent = async (req, res) => {
   try {
     const { prompt, conversationId, agent } = req.body;
-
+    const file=req.file
+    console.log("file", file)
     // await redis.del(`messages-${conversationId}`)
     await axios.post(`${process.env.CHAT_SERVICE_URL}/save-message`, {
       conversationId,
@@ -15,6 +16,7 @@ export const agent = async (req, res) => {
       prompt,
       conversationId,
       agent,
+      file:req.file, // Pass the uploaded file to the graph
     });
 
     await addMessage(conversationId, "user", prompt);

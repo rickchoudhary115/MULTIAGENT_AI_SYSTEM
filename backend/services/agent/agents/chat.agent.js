@@ -74,11 +74,13 @@ Formatting:
     aiResponse: response.content,
   };
 }catch (error) {
+  console.log("Error generating AI response:", error);
     return {
       ...state,
       aiResponse: `
       ❌ Failed to generate response.
       `,
+      
     };
   }
 }

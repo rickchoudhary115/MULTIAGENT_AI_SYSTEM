@@ -1,5 +1,6 @@
 import {
   Code2,
+  X,
   FileText,
   Globe,
   ImageIcon,
@@ -11,32 +12,43 @@ import {
   Zap,
 } from "lucide-react";
 
-import React, { useState } from "react";
-
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import sendMessage from "../features/sendMessage";
-
 import { addMessage, setArtifacts } from "../redux/messageSlice";
-
 import { createConversation } from "../features/createConversation";
-
 import {
   addConversation,
   setSelectedConversation,
   setConvTitle,
 } from "../redux/conversationSlice";
-
 import { updateConversation } from "../features/updateConversation";
 
 function ChatInput() {
   const [value, setValue] = useState("");
-
   const [selectedAgent, setSelectedAgent] = useState("Auto");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  const fileRef = useRef(null);
 
   const { selectedConversation } = useSelector((state) => state.conversation);
 
   const dispatch = useDispatch();
+
+  // Image preview
+  useEffect(() => {
+    if (!selectedFile || !selectedFile.type.startsWith("image/")) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const url = URL.createObjectURL(selectedFile);
+    setPreviewUrl(url);
+
+    return () => URL.revokeObjectURL(url);
+  }, [selectedFile]);
 
   const handleSendMessage = async () => {
     const prompt = value.trim();
@@ -45,6 +57,7 @@ function ChatInput() {
 
     let conversation = selectedConversation;
 
+    // Create conversation if needed
     if (!conversation) {
       const conv = await createConversation();
 
@@ -61,6 +74,7 @@ function ChatInput() {
 
     if (!conversation?._id) return;
 
+    // Set conversation title
     if (conversation.title === "New Conversation") {
       const title = prompt.slice(0, 40);
 
@@ -77,13 +91,18 @@ function ChatInput() {
       );
     }
 
-    const payload = {
-      prompt,
-      conversationId: conversation._id,
-      agent: selectedAgent.toLowerCase(),
-    };
+    console.log("SELECTED FILE:", selectedFile);
 
-    console.log("CHAT PAYLOAD:", payload);
+    // FormData
+    const formData = new FormData();
+
+    formData.append("prompt", prompt);
+    formData.append("conversationId", conversation._id);
+    formData.append("agent", selectedAgent.toLowerCase());
+
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
 
     // Add user message
     dispatch(
@@ -97,8 +116,12 @@ function ChatInput() {
     setValue("");
 
     try {
-      const data = await sendMessage(payload);
-      dispatch(setArtifacts(data.artifacts || []))
+      const data = await sendMessage(formData);
+
+      setSelectedFile(null);
+
+      dispatch(setArtifacts(data?.artifacts || []));
+
       // Add AI response
       dispatch(
         addMessage({
@@ -108,7 +131,8 @@ function ChatInput() {
           artifacts: data?.artifacts || [],
         }),
       );
-      console.log(data);
+
+      console.log("CHAT RESPONSE:", data);
     } catch (error) {
       console.log("CHAT ERROR:", error.response?.data || error.message);
     }
@@ -154,78 +178,74 @@ function ChatInput() {
 
   return (
     <div className="w-full overflow-hidden px-3 md:px-5 py-3.5 border-t border-white/[0.06] bg-[#0d0f14]">
-      {" "}
       <div
         className="
-       group
-       flex
-       flex-col
-       gap-2
-       bg-[#11141b]
-       border
-       border-white/[0.07]
-       rounded-2xl
-       px-3.5
-       pt-3
-       pb-2.5
-       shadow-lg
-       shadow-black/10
-       transition-all
-       duration-200
-       focus-within:border-indigo-500/30
-       focus-within:shadow-[0_0_25px_rgba(99,102,241,0.04)]
-     "
+          group
+          flex
+          flex-col
+          gap-2
+          bg-[#11141b]
+          border
+          border-white/[0.07]
+          rounded-2xl
+          px-3.5
+          pt-3
+          pb-2.5
+          shadow-lg
+          shadow-black/10
+          transition-all
+          duration-200
+          focus-within:border-indigo-500/30
+        "
       >
-        {/* ================= AGENTS ================= */}
-  
+        {/* AGENTS */}
         <div className="flex w-full gap-2 pr-1 flex-wrap">
           {agents.map((agent) => {
             const isActive = selectedAgent === agent.label;
-
             const Icon = agent.icon;
 
             return (
-              <div
+              <button
                 key={agent.id}
+                type="button"
                 onClick={() => setSelectedAgent(agent.label)}
                 className={`
-              flex-shrink-0
-              cursor-pointer
-              inline-flex
-              items-center
-              gap-1.5
-              px-3
-              py-1.5
-              rounded-full
-              text-[11px]
-              sm:text-xs
-              font-medium
-              border
-              transition-all
-              duration-200
-              select-none
-              active:scale-95
-              ${
-                isActive
-                  ? `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-violet-500
-                    to-purple-600
-                    text-white
-                    border-transparent
-                    shadow-[0_2px_12px_rgba(99,102,241,0.25)]
-                  `
-                  : `
-                    bg-white/[0.025]
-                    text-slate-500
-                    border-white/[0.06]
-                    hover:bg-white/[0.07]
-                    hover:text-slate-300
-                    hover:border-white/[0.1]
-                  `
-              }
-            `}
+                  flex-shrink-0
+                  inline-flex
+                  items-center
+                  gap-1.5
+                  px-3
+                  py-1.5
+                  rounded-full
+                  text-[11px]
+                  sm:text-xs
+                  font-medium
+                  border
+                  transition-all
+                  duration-200
+                  select-none
+                  active:scale-95
+                  ${
+                    isActive
+                      ? `
+                        bg-gradient-to-r
+                        from-indigo-500
+                        via-violet-500
+                        to-purple-600
+                        text-white
+                        border-transparent
+                        shadow-[0_2px_12px_rgba(99,102,241,0.25)]
+                      `
+                      : `
+                        bg-white/[0.025]
+                        text-slate-500
+                        border-white/[0.06]
+                        hover:bg-white/[0.07]
+                        hover:text-slate-300
+                        hover:border-white/[0.1]
+                      `
+                  }
+                `}
               >
                 <Icon
                   size={13}
@@ -234,61 +254,115 @@ function ChatInput() {
                 />
 
                 <span>{agent.label}</span>
-              </div>
+              </button>
             );
           })}
         </div>
-        {/* ================= TEXTAREA ================= */}
+
+        {/* SELECTED FILE */}
+        {selectedFile && (
+          <div className="flex items-center gap-3 w-fit max-w-sm px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10">
+            {selectedFile.type === "application/pdf" ? (
+              <FileText size={20} className="text-red-400 shrink-0" />
+            ) : selectedFile.type.startsWith("image/") ? (
+              <img
+                src={previewUrl}
+                alt="Selected"
+                className="w-10 h-10 object-cover rounded-lg shrink-0"
+              />
+            ) : null}
+
+            <div className="min-w-0">
+              <p
+                className="text-xs text-white truncate max-w-[180px]"
+                title={selectedFile.name}
+              >
+                {selectedFile.name}
+              </p>
+
+              <p className="text-[10px] text-slate-500">
+                {Math.ceil(selectedFile.size / 1024)} KB
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setSelectedFile(null)}
+              className="shrink-0 text-slate-500 hover:text-white transition"
+              aria-label="Remove file"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
+
+        {/* TEXTAREA */}
         <textarea
           placeholder="Ask anything..."
           onChange={(e) => setValue(e.target.value)}
           value={value}
-          className="
-        w-full
-        min-h-[72px]
-        max-h-48
-        resize-none
-        bg-transparent
-        outline-none
-        text-[14px]
-        text-slate-200
-        placeholder:text-slate-600
-        leading-6
-        py-1.5
-        px-0.5
-        [scrollbar-width:none]
-        [&::-webkit-scrollbar]:hidden
-        selection:bg-indigo-500/30
-      "
           rows={3}
+          className="
+            w-full
+            min-h-[72px]
+            max-h-48
+            resize-none
+            bg-transparent
+            outline-none
+            text-[14px]
+            text-slate-200
+            placeholder:text-slate-600
+            leading-6
+            py-1.5
+            px-0.5
+            [scrollbar-width:none]
+            [&::-webkit-scrollbar]:hidden
+            selection:bg-indigo-500/30
+          "
         />
-        {/* ================= BOTTOM BAR ================= */}
+
+        {/* BOTTOM BAR */}
         <div className="flex items-center justify-between pt-0.5">
           {/* LEFT BUTTONS */}
-
           <div className="flex items-center gap-1">
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              hidden
+              ref={fileRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+
+                if (file) {
+                  setSelectedFile(file);
+                }
+
+                e.target.value = "";
+              }}
+            />
+
             <button
               type="button"
               aria-label="Attach file"
+              onClick={() => fileRef.current?.click()}
               className="
-            flex
-            items-center
-            justify-center
-            w-8
-            h-8
-            rounded-lg
-            text-slate-600
-            hover:text-slate-300
-            hover:bg-white/[0.06]
-            active:scale-95
-            transition-all
-            duration-150
-            bg-transparent
-            border
-            border-transparent
-            hover:border-white/[0.06]
-            cursor-pointer
-          "
+                flex
+                items-center
+                justify-center
+                w-8
+                h-8
+                rounded-lg
+                text-slate-600
+                hover:text-slate-300
+                hover:bg-white/[0.06]
+                active:scale-95
+                transition-all
+                duration-150
+                bg-transparent
+                border
+                border-transparent
+                hover:border-white/[0.06]
+              "
             >
               <Paperclip size={16} strokeWidth={1.8} />
             </button>
@@ -297,72 +371,70 @@ function ChatInput() {
               type="button"
               aria-label="Voice input"
               className="
-            flex
-            items-center
-            justify-center
-            w-8
-            h-8
-            rounded-lg
-            text-slate-600
-            hover:text-slate-300
-            hover:bg-white/[0.06]
-            active:scale-95
-            transition-all
-            duration-150
-            bg-transparent
-            border
-            border-transparent
-            hover:border-white/[0.06]
-            cursor-pointer
-          "
+                flex
+                items-center
+                justify-center
+                w-8
+                h-8
+                rounded-lg
+                text-slate-600
+                hover:text-slate-300
+                hover:bg-white/[0.06]
+                active:scale-95
+                transition-all
+                duration-150
+                bg-transparent
+                border
+                border-transparent
+                hover:border-white/[0.06]
+              "
             >
               <Mic size={15} strokeWidth={1.8} />
             </button>
           </div>
 
-          {/* ================= SEND ================= */}
-
+          {/* SEND */}
           <button
             type="button"
             disabled={!value.trim()}
             onClick={handleSendMessage}
             aria-label="Send message"
             className={`
-          flex
-          items-center
-          justify-center
-          w-9
-          h-9
-          rounded-xl
-          border
-          transition-all
-          duration-200
-          ${
-            value.trim()
-              ? `
-                bg-gradient-to-br
-                from-indigo-500
-                via-violet-600
-                to-purple-700
-                border-indigo-400/20
-                text-white
-                shadow-md
-                shadow-indigo-500/20
-                hover:shadow-lg
-                hover:shadow-indigo-500/30
-                hover:-translate-y-0.5
-                active:translate-y-0
-                active:scale-95
-                cursor-pointer
-              `
-              : `
-                bg-white/[0.04]
-                border-white/[0.05]
-                text-slate-700
-                cursor-not-allowed
-              `
-          }
-        `}
+              flex
+              items-center
+              justify-center
+              w-9
+              h-9
+              rounded-xl
+              border
+              transition-all
+              duration-200
+              ${
+                value.trim()
+                  ? `
+                    bg-gradient-to-br
+                    from-indigo-500
+                    via-violet-600
+                    to-purple-700
+                    border-indigo-400/20
+                    text-white
+                    shadow-md
+                    shadow-indigo-500/20
+                    hover:shadow-lg
+                    hover:shadow-indigo-500/30
+                    hover:-translate-y-0.5
+                    active:translate-y-0
+                    active:scale-95
+                    cursor-pointer
+                  `
+                  : `
+                    bg-white/[0.04]
+                    border-white/[0.05]
+                    text-slate-700
+                    cursor-not-allowed
+                  `
+              }
+            `}
           >
             <Send
               size={15}

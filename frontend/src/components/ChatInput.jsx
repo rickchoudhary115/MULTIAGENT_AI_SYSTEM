@@ -11,12 +11,10 @@ import {
   Send,
   Zap,
 } from "lucide-react";
-
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import sendMessage from "../features/sendMessage";
-import { addMessage, setArtifacts } from "../redux/messageSlice";
+import { addMessage, setArtifacts, setIsLoading } from "../redux/messageSlice";
 import { createConversation } from "../features/createConversation";
 import {
   addConversation,
@@ -25,6 +23,8 @@ import {
 } from "../redux/conversationSlice";
 import { updateConversation } from "../features/updateConversation";
 
+
+
 function ChatInput() {
   const [value, setValue] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("Auto");
@@ -32,12 +32,8 @@ function ChatInput() {
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const fileRef = useRef(null);
-
   const { selectedConversation } = useSelector((state) => state.conversation);
-
   const dispatch = useDispatch();
-
-  // Image preview
   useEffect(() => {
     if (!selectedFile || !selectedFile.type.startsWith("image/")) {
       setPreviewUrl(null);
@@ -51,6 +47,7 @@ function ChatInput() {
   }, [selectedFile]);
 
   const handleSendMessage = async () => {
+    dispatch(setIsLoading(true))
     const prompt = value.trim();
 
     if (!prompt) return;
@@ -117,7 +114,7 @@ function ChatInput() {
 
     try {
       const data = await sendMessage(formData);
-
+      dispatch(setIsLoading(false));
       setSelectedFile(null);
 
       dispatch(setArtifacts(data?.artifacts || []));

@@ -272,7 +272,7 @@ function SideBar() {
             </div>
 
             <span className="shrink-0 text-[9px] font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wider uppercase">
-              Free
+              {`${user?.plan} ` || "Free"}
             </span>
 
             <button
@@ -310,7 +310,6 @@ function SideBar() {
           <div className="px-5 pt-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">
             {conversations.length === 0 ? "No Recent Conversation" : "Recents"}
           </div>
-
 
           <div className="flex-1 min-h-0 overflow-y-auto px-2.5 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {conversations.map((conv) => {
@@ -377,7 +376,7 @@ function SideBar() {
                     </p>
 
                     <p className="text-[10px] text-indigo-400/80 mt-0.5">
-                      Free Plan
+                      {` ${user?.plan} plan` || "Free plan"}
                     </p>
 
                     <p className="text-[11px] text-slate-600 truncate mt-0.5">

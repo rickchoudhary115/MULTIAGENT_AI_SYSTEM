@@ -50,6 +50,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       message: "login successful",
+      user: sessionUser,
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -122,7 +123,7 @@ export const updateUserPayment = async (req, res) => {
     await user.save();
 
     // Update Redis session
-    const sessionId = req.cookies?.session;
+    const sessionId = req.cookies?.session
 
     if (sessionId) {
       await redis.set(

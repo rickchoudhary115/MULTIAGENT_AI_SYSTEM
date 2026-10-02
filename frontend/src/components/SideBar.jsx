@@ -272,7 +272,7 @@ function SideBar() {
             </div>
 
             <span className="shrink-0 text-[9px] font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wider uppercase">
-              {`${user?.plan} ` || "Free"}
+              {user?.plan ?? "free"}
             </span>
 
             <button
@@ -376,7 +376,7 @@ function SideBar() {
                     </p>
 
                     <p className="text-[10px] text-indigo-400/80 mt-0.5">
-                      {` ${user?.plan} plan` || "Free plan"}
+                      {`${user?.plan ?? "free"} plan`}
                     </p>
 
                     <p className="text-[11px] text-slate-600 truncate mt-0.5">

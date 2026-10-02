@@ -5,32 +5,36 @@ const paymentSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: true,
+      
     },
     orderId: {
       type: String,
       required: true,
+    
     },
     paymentId: String,
-    amount:Number,
-    currency:{
-        type:String,
-        default:"INR"
+    amount: Number,
+    currency: {
+      type: String,
+      default: "INR",
     },
-    credits:{
-        type:Number
-    },
-    plan:{
-        type:String
-    },
-    status:{
-        type:String,
-        enum:["created","paid","failed"],
-        default:"created"
+    credits: Number,
+    plan: String,
 
-    }
+    // Money state
+    status: {
+      type: String,
+      enum: ["created", "paid", "failed"],
+      default: "created",
+    },
+    fulfillment: {
+      type: String,
+      enum: ["pending", "processing", "done"],
+      default: "pending",
+    },
   },
   { timestamps: true },
 );
 
-const Payment = mongoose.model("payment",paymentSchema) 
-export default Payment
+const Payment = mongoose.model("payment", paymentSchema);
+export default Payment;

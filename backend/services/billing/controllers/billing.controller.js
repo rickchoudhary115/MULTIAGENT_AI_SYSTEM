@@ -70,8 +70,6 @@ export const verifyPayment = async (req, res) => {
         message: "Missing payment verification details",
       });
     }
-
-    // Verify Razorpay signature
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -82,10 +80,7 @@ export const verifyPayment = async (req, res) => {
         message: "Payment verification failed",
       });
     }
-
     console.log("Razorpay signature verified");
-
-    // Find payment in MongoDB
     const payment = await Payment.findOne({
       orderId: razorpay_order_id,
     });

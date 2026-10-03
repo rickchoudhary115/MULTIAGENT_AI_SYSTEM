@@ -28,7 +28,6 @@ CONVERSION
 DOCUMENTATION
 
 User Request:
-
 ${state.prompt}
 `);
 
@@ -53,7 +52,7 @@ Return ONLY ONE value:
 PROJECT
 SIMPLE_CODE
 
-Use PROJECT only when the user explicitly asks for things such as:
+Use PROJECT when the user asks for things such as:
 
 - website
 - frontend
@@ -100,7 +99,6 @@ Examples:
 => PROJECT
 
 User Request:
-
 ${state.prompt}
 `);
 
@@ -114,10 +112,7 @@ ${state.prompt}
     // 3. SIMPLE CODE GENERATION
     // =========================================================
 
-    if (
-      intent === "CODE_GENERATION" &&
-      requestType !== "PROJECT"
-    ) {
+    if (intent === "CODE_GENERATION" && requestType !== "PROJECT") {
       const prompt = `
 You are CortexAI, an expert software engineer and coding tutor.
 
@@ -129,37 +124,21 @@ ${state.prompt}
 IMPORTANT RULES:
 
 1. Follow the programming language requested by the user.
-
-2. If the user asks for Python, use Python.
-
-3. If the user asks for C++, use C++.
-
-4. If the user asks for Java, use Java.
-
-5. If the user asks for JavaScript, use JavaScript.
-
+2. If Python is requested, use Python.
+3. If C++ is requested, use C++.
+4. If Java is requested, use Java.
+5. If JavaScript is requested, use JavaScript.
 6. Provide the necessary code.
-
-7. Also provide a short, clear explanation of what the code does.
-
-8. Include an example or expected output when useful.
-
+7. Give a short explanation.
+8. Include expected output when useful.
 9. Keep the answer concise and beginner-friendly.
-
-10. Do NOT create HTML/CSS/JavaScript unless the user asks for
-web development.
-
-11. Do NOT create a frontend.
-
-12. Do NOT create a project.
-
-13. Do NOT create multiple files.
-
-14. Do NOT create an artifact.
-
-15. Do NOT add unnecessary libraries or frameworks.
-
-16. Do NOT turn a simple programming problem into a large application.
+10. Do not create HTML/CSS/JavaScript unless web development is requested.
+11. Do not create a frontend.
+12. Do not create a project.
+13. Do not create multiple files.
+14. Do not create an artifact.
+15. Do not add unnecessary libraries.
+16. Do not turn a simple problem into a large application.
 
 Use this structure when appropriate:
 
@@ -169,49 +148,15 @@ Short explanation.
 
 ### Code
 
-The required code.
+Required code.
 
 ### How it works
 
-Short explanation of the important lines.
+Brief explanation.
 
 ### Output
 
 Expected output.
-
-Example:
-
-User:
-give me sum of two numbers in python
-
-Response:
-
-### Explanation
-
-We can add two numbers in Python using the `+` operator.
-
-\`\`\`python
-def add(a, b):
-    return a + b
-
-a = 10
-b = 20
-
-result = add(a, b)
-
-print(result)
-\`\`\`
-
-### How it works
-
-- add(a, b) takes two numbers.
-- a + b adds them.
-- return sends the result back.
-- print() displays the result.
-
-### Output
-
-30
 
 Return normal Markdown.
 `;
@@ -219,27 +164,19 @@ Return normal Markdown.
       let res;
 
       try {
-        console.log(
-          "========== SIMPLE CODING MODEL CALL =========="
-        );
+        console.log("========== SIMPLE CODING MODEL CALL ==========");
 
         res = await llm.invoke(prompt);
 
         if (!res) {
-          throw new Error(
-            "Coding model returned undefined response"
-          );
+          throw new Error("Coding model returned undefined response");
         }
 
-        console.log(
-          "========== RAW SIMPLE CODING RESPONSE =========="
-        );
+        console.log("========== RAW SIMPLE CODING RESPONSE ==========");
 
         console.log(res);
       } catch (error) {
-        console.error(
-          "========== CODING MODEL ERROR =========="
-        );
+        console.error("========== CODING MODEL ERROR ==========");
 
         console.error("MESSAGE:", error?.message);
         console.error("STACK:", error?.stack);
@@ -273,9 +210,7 @@ Return normal Markdown.
           .trim();
       }
 
-      console.log(
-        "========== SIMPLE CODING ANSWER =========="
-      );
+      console.log("========== SIMPLE CODING ANSWER ==========");
 
       console.log(data);
 
@@ -286,13 +221,10 @@ Return normal Markdown.
       const deduction = await deductCredicts(
         state.userId,
         "coding",
-        state.session
+        state.session,
       );
 
-      console.log(
-        "CODING CREDITS:",
-        deduction?.credits
-      );
+      console.log("CODING CREDITS:", deduction?.credits);
 
       return {
         ...state,
@@ -306,26 +238,20 @@ Return normal Markdown.
     // 4. PROJECT / FRONTEND GENERATION
     // =========================================================
 
-    if (
-      intent === "CODE_GENERATION" &&
-      requestType === "PROJECT"
-    ) {
+    if (intent === "CODE_GENERATION" && requestType === "PROJECT") {
       const prompt = `
 You are CortexAI, an expert frontend developer and UI/UX designer.
 
-The user explicitly requested a complete project.
+Create a COMPLETE and WORKING frontend project for the user's request.
 
 USER REQUEST:
-
 ${state.prompt}
 
 ==================================================
-STACK
+TECHNOLOGY
 ==================================================
 
-- HTML
-- CSS
-- Vanilla JavaScript
+- Use HTML, CSS and vanilla JavaScript.
 - Use React/Vue/Next/etc ONLY if explicitly requested.
 - No backend.
 - No database.
@@ -335,7 +261,7 @@ STACK
 DESIGN
 ==================================================
 
-Create a premium, modern and polished interface.
+Create a modern, premium and polished interface.
 
 Use:
 
@@ -348,120 +274,139 @@ Use:
 - Responsive layout
 - Hover effects
 - Subtle animations
-- Strong visual hierarchy
+- Clear visual hierarchy
 
-Choose ONE visual direction:
-
-1. Aurora
-2. Sunset
-3. Tropical
-4. Cyber
-5. Pastel
+Choose ONE suitable visual style and keep it consistent.
 
 ==================================================
 FUNCTIONALITY
 ==================================================
 
-Build only the important interactions.
+Implement the important functionality requested by the user.
 
-Use small mock data.
+Use small mock data when necessary.
 
-Maximum 5-8 items for lists/tables.
+Everything visible in the UI should work.
 
-For dashboards:
+Examples:
 
-- Hero/header
-- 3-4 statistic cards
-- Small table/list
-- Status badges
-- Search/filter if useful
-- One simple form or modal
+- Buttons should work.
+- Forms should work.
+- Search should work if included.
+- Filters should work if included.
+- Modals should open and close.
+- Navigation should work.
+- Interactive elements should have appropriate behavior.
 
-For landing pages:
-
-- Hero
-- Features
-- Main content
-- CTA
-- Footer
-
-For portfolios:
-
-- Bold hero
-- Project cards
-- Hover effects
+Do not add unnecessary functionality.
 
 ==================================================
-DO NOT
+KEEP THE PROJECT COMPACT
 ==================================================
 
-- Authentication
-- Backend APIs
+Generate ONLY the files required to run the project.
+
+Maximum 3 files.
+
+For a normal HTML/CSS/JS website use:
+
+1. index.html
+2. style.css
+3. script.js
+
+Keep each file reasonably small.
+
+Do NOT generate:
+
+- Backend
 - Database
-- Complex charts
+- Authentication
 - Huge datasets
+- Complex charts
 - Large SVGs
 - Base64 images
 - Unnecessary pages
+- Unnecessary libraries
 - TODO placeholders
+- Fake unfinished functions
 - Repeated code
+- Long comments
+
+Use remote image URLs only when images are useful.
 
 ==================================================
-OUTPUT
+OUTPUT FORMAT
 ==================================================
 
 Return ONLY valid JSON.
+
+Use exactly this structure:
 
 {
   "files": [
     {
       "name": "index.html",
-      "content": "..."
+      "content": "complete HTML here"
     },
     {
       "name": "style.css",
-      "content": "..."
+      "content": "complete CSS here"
     },
     {
       "name": "script.js",
-      "content": "..."
+      "content": "complete JavaScript here"
     }
   ]
 }
 
-Rules:
+==================================================
+STRICT RULES
+==================================================
 
-- No Markdown
-- No code fences
-- No explanation
-- No text outside JSON
-- All files must be complete
-- All files must work together
-- Do not add additional files
-- Keep the response compact
+- Return JSON only.
+- No Markdown.
+- No code fences.
+- No explanation outside JSON.
+- Every file must be complete.
+- All files must work together.
+- Do not leave TODOs.
+- Do not leave unfinished code.
+- Do not create additional files.
+- Keep the implementation compact.
+- Prioritize working functionality over excessive styling.
 `;
 
       let res;
 
       try {
-        console.log(
-          "========== PROJECT CODING MODEL CALL =========="
-        );
+        console.log("========== PROJECT CODING MODEL CALL ==========");
 
         res = await llm.invoke(prompt);
 
         if (!res) {
-          throw new Error(
-            "Coding model returned undefined response"
-          );
+          throw new Error("Coding model returned undefined response");
         }
-      } catch (error) {
-        console.error(
-          "========== CODING MODEL ERROR =========="
+
+        console.log("========== PROJECT MODEL RESPONSE RECEIVED ==========");
+
+        console.log(
+          "CODING FINISH REASON:",
+          res?.response_metadata?.finish_reason ||
+            res?.response_metadata?.finishReason ||
+            res?.additional_kwargs?.finish_reason,
         );
 
-        console.error(error?.message);
-        console.error(error?.stack);
+        console.log(
+          "CODING OUTPUT TOKENS:",
+          res?.usage_metadata?.output_tokens ||
+            res?.response_metadata?.usage?.completion_tokens ||
+            0,
+        );
+      } catch (error) {
+        console.error("========== CODING MODEL ERROR ==========");
+
+        console.error("MESSAGE:", error?.message);
+        console.error("STACK:", error?.stack);
 
         return {
           ...state,
@@ -485,21 +430,17 @@ Rules:
         res?.response_metadata?.usage?.completion_tokens ||
         0;
 
-      console.log(
-        "CODING FINISH REASON:",
-        finishReason
-      );
+      console.log("CODING FINISH REASON:", finishReason);
 
-      console.log(
-        "CODING OUTPUT TOKENS:",
-        outputTokens
-      );
+      console.log("CODING OUTPUT TOKENS:", outputTokens);
 
       if (finishReason === "length") {
+        console.error("❌ PROJECT GENERATION STOPPED BECAUSE OF TOKEN LIMIT");
+
         return {
           ...state,
           aiResponse:
-            "The coding model stopped before completing the project. Please try again with a smaller request.",
+            "The coding model reached its output limit while generating the project. Try asking for a smaller project.",
           artifacts: [],
         };
       }
@@ -528,11 +469,14 @@ Rules:
       if (!text) {
         return {
           ...state,
-          aiResponse:
-            "The coding model returned an empty response.",
+          aiResponse: "The coding model returned an empty response.",
           artifacts: [],
         };
       }
+
+      console.log("========== PROJECT RAW RESPONSE ==========");
+
+      console.log(text);
 
       // =====================================================
       // REMOVE MARKDOWN FENCES
@@ -551,15 +495,12 @@ Rules:
       const start = text.indexOf("{");
       const end = text.lastIndexOf("}");
 
-      if (
-        start === -1 ||
-        end === -1 ||
-        end <= start
-      ) {
+      if (start === -1 || end === -1 || end <= start) {
+        console.error("❌ PROJECT JSON OBJECT NOT FOUND");
+
         return {
           ...state,
-          aiResponse:
-            "The coding model did not return valid project JSON.",
+          aiResponse: "The coding model did not return valid project JSON.",
           artifacts: [],
         };
       }
@@ -574,30 +515,23 @@ Rules:
 
       try {
         data = JSON.parse(text);
+
+        console.log("✅ PROJECT JSON PARSED SUCCESSFULLY");
       } catch (error) {
-        console.warn(
-          "PRIMARY JSON.parse FAILED:",
-          error?.message
-        );
+        console.warn("PRIMARY JSON.parse FAILED:", error?.message);
 
         try {
           const repaired = jsonrepair(text);
 
           data = JSON.parse(repaired);
 
-          console.log(
-            "JSON REPAIR SUCCEEDED"
-          );
+          console.log("✅ JSON REPAIR SUCCEEDED");
         } catch (repairError) {
-          console.error(
-            "JSON REPAIR FAILED:",
-            repairError?.message
-          );
+          console.error("❌ JSON REPAIR FAILED:", repairError?.message);
 
           return {
             ...state,
-            aiResponse:
-              "The coding model returned malformed project data.",
+            aiResponse: "The coding model returned malformed project data.",
             artifacts: [],
           };
         }
@@ -608,10 +542,11 @@ Rules:
       // =====================================================
 
       if (!data || !Array.isArray(data.files)) {
+        console.error("❌ INVALID PROJECT FILE STRUCTURE");
+
         return {
           ...state,
-          aiResponse:
-            "The coding model returned invalid project files.",
+          aiResponse: "The coding model returned invalid project files.",
           artifacts: [],
         };
       }
@@ -620,28 +555,27 @@ Rules:
         (file) =>
           file &&
           typeof file.name === "string" &&
-          typeof file.content === "string"
+          typeof file.content === "string",
       );
 
       if (validFiles.length === 0) {
         return {
           ...state,
-          aiResponse:
-            "No valid files were generated.",
+          aiResponse: "No valid files were generated.",
           artifacts: [],
         };
       }
 
+      // Maximum 3 files
       const finalFiles = validFiles.slice(0, 3);
 
-      console.log(
-        "========== GENERATED FILES =========="
-      );
+      console.log("========== GENERATED FILES ==========");
 
       finalFiles.forEach((file, index) => {
         console.log(
           `FILE ${index}:`,
-          file.name
+          file.name,
+          `(${file.content.length} chars)`,
         );
       });
 
@@ -652,8 +586,10 @@ Rules:
       const deduction = await deductCredicts(
         state.userId,
         "coding",
-        state.session
+        state.session,
       );
+
+      console.log("CODING CREDITS:", deduction?.credits);
 
       // =====================================================
       // RETURN PROJECT
@@ -662,8 +598,7 @@ Rules:
       return {
         ...state,
 
-        aiResponse:
-          "Code Generated Successfully",
+        aiResponse: "Code Generated Successfully",
 
         artifacts: [
           {
@@ -685,12 +620,10 @@ Rules:
     const prompt = `
 You are CortexAI, an expert software engineer and coding tutor.
 
-User request:
-
+USER REQUEST:
 ${state.prompt}
 
-Intent:
-
+INTENT:
 ${intent}
 
 Answer the user's request clearly.
@@ -698,8 +631,8 @@ Answer the user's request clearly.
 IMPORTANT:
 
 - Follow the requested programming language.
-- Provide code when code is needed.
-- Explain the important parts.
+- Provide code when needed.
+- Explain important parts.
 - Include examples when useful.
 - Keep the response concise.
 - Do not create project artifacts.
@@ -730,20 +663,18 @@ Return normal Markdown.
     let res;
 
     try {
+      console.log("========== OTHER CODING MODEL CALL ==========");
+
       res = await llm.invoke(prompt);
 
       if (!res) {
-        throw new Error(
-          "Coding model returned undefined response"
-        );
+        throw new Error("Coding model returned undefined response");
       }
     } catch (error) {
-      console.error(
-        "========== CODING MODEL ERROR =========="
-      );
+      console.error("========== CODING MODEL ERROR ==========");
 
-      console.error(error?.message);
-      console.error(error?.stack);
+      console.error("MESSAGE:", error?.message);
+      console.error("STACK:", error?.stack);
 
       return {
         ...state,
@@ -781,29 +712,22 @@ Return normal Markdown.
     const deduction = await deductCredicts(
       state.userId,
       "coding",
-      state.session
+      state.session,
     );
 
-    console.log(
-      "CODING CREDITS:",
-      deduction?.credits
-    );
+    console.log("CODING CREDITS:", deduction?.credits);
 
     return {
       ...state,
-      aiResponse:
-        data || "No response generated.",
+      aiResponse: data || "No response generated.",
       artifacts: [],
       credits: deduction?.credits,
     };
-
   } catch (error) {
-    console.error(
-      "========== CODING AGENT ERROR =========="
-    );
+    console.error("========== CODING AGENT ERROR ==========");
 
-    console.error(error?.message);
-    console.error(error?.stack);
+    console.error("MESSAGE:", error?.message);
+    console.error("STACK:", error?.stack);
 
     if (error?.status === 429) {
       return {

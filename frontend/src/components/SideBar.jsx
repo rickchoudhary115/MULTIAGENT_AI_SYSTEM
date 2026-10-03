@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useId, useState } from "react";
 
 import {
   Coins,
@@ -12,27 +13,106 @@ import {
   User,
   X,
 } from "lucide-react";
-
 import { useDispatch, useSelector } from "react-redux";
-
 import { getConversations } from "../features/getConversations";
-
 import {
   setConversation,
   setSelectedConversation,
 } from "../redux/conversationSlice";
-
 import { setUserData } from "../redux/userSlice";
-
 import logOut from "../features/logOut";
-
 import { setmessage } from "../redux/messageSlice";
-
 import getMessages from "../features/getMessages";
 import BillingDrawer from "./BillingDrawer";
 
 const iconBtn =
   "flex items-center justify-center rounded-xl border border-transparent bg-transparent text-slate-500 cursor-pointer transition-all duration-200 hover:text-slate-100 hover:bg-white/[0.06] hover:border-white/[0.07]";
+
+/* Kivo Raccoon Logo */
+function RaccoonLogo({ className = "" }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Kivo logo"
+      role="img"
+    >
+      {/* Soft ears */}
+      <path
+        d="M13 38 C12 29 13 17 19 13 C23 11 30 17 38 27 L34 39 Z"
+        fill="#111111"
+      />
+
+      <path
+        d="M87 38 C88 29 87 17 81 13 C77 11 70 17 62 27 L66 39 Z"
+        fill="#111111"
+      />
+
+      {/* Inner ears */}
+      <path
+        d="M18 29 C18 22 19 19 21 18 C24 18 28 22 31 27 L28 32 Z"
+        fill="#383838"
+      />
+
+      <path
+        d="M82 29 C82 22 81 19 79 18 C76 18 72 22 69 27 L72 32 Z"
+        fill="#383838"
+      />
+
+      {/* Chubby head */}
+      <ellipse cx="50" cy="57" rx="39" ry="36" fill="#111111" />
+
+      {/* Cheek highlights */}
+      <ellipse cx="22" cy="67" rx="8" ry="7" fill="#222222" />
+
+      <ellipse cx="78" cy="67" rx="8" ry="7" fill="#222222" />
+
+      {/* Cute eye patches */}
+      <ellipse cx="32" cy="52" rx="13" ry="11" fill="#ffffff" />
+
+      <ellipse cx="68" cy="52" rx="13" ry="11" fill="#ffffff" />
+
+      {/* Big cute eyes */}
+      <ellipse cx="33" cy="53" rx="5" ry="6" fill="#111111" />
+
+      <ellipse cx="67" cy="53" rx="5" ry="6" fill="#111111" />
+
+      {/* Eye sparkle */}
+      <circle cx="31.5" cy="51" r="1.8" fill="#ffffff" />
+
+      <circle cx="65.5" cy="51" r="1.8" fill="#ffffff" />
+
+      {/* Soft muzzle */}
+      <ellipse cx="50" cy="69" rx="17" ry="14" fill="#ffffff" />
+
+      {/* Tiny nose */}
+      <ellipse cx="50" cy="67" rx="5" ry="3.8" fill="#111111" />
+
+      {/* Cute smile */}
+      <path
+        d="M50 70 C47 73 44 73 42 71"
+        fill="none"
+        stroke="#111111"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+
+      <path
+        d="M50 70 C53 73 56 73 58 71"
+        fill="none"
+        stroke="#111111"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+
+      {/* Tiny cheek dots */}
+      <circle cx="36" cy="72" r="1.3" fill="#dddddd" />
+
+      <circle cx="64" cy="72" r="1.3" fill="#dddddd" />
+    </svg>
+  );
+}
 
 /* Defined outside SideBar so it isn't remounted on every render */
 function Avatar({ user, imageError, onError }) {
@@ -51,8 +131,8 @@ function Avatar({ user, imageError, onError }) {
 }
 
 function SideBar() {
-  const [collapsed, setCollapsed] = useState(false); // desktop only
-  const [mobileOpen, setMobileOpen] = useState(false); // mobile drawer
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
 
@@ -105,11 +185,13 @@ function SideBar() {
   /* ---------- close drawer when resizing to desktop ---------- */
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
+
     const onChange = (e) => {
       if (e.matches) setMobileOpen(false);
     };
 
     mq.addEventListener("change", onChange);
+
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
@@ -132,7 +214,7 @@ function SideBar() {
   };
 
   const handleOpenBilling = () => {
-    setMobileOpen(false); // don't leave the drawer open behind the billing drawer
+    setMobileOpen(false);
     setShowBilling(true);
   };
 
@@ -145,7 +227,6 @@ function SideBar() {
   return (
     <>
       {/* ================= MOBILE HAMBURGER ================= */}
-
       {!mobileOpen && (
         <button
           type="button"
@@ -158,7 +239,6 @@ function SideBar() {
       )}
 
       {/* ================= MOBILE OVERLAY ================= */}
-
       <div
         onClick={() => setMobileOpen(false)}
         className={`
@@ -169,7 +249,6 @@ function SideBar() {
       />
 
       {/* ================= COLLAPSED RAIL (DESKTOP ONLY) ================= */}
-
       {collapsed && (
         <div className="hidden lg:flex flex-col items-center w-[60px] h-screen bg-[#0b0e13] border-r border-white/[0.06] py-3 gap-1 shrink-0 shadow-[8px_0_30px_rgba(0,0,0,0.12)]">
           <button
@@ -252,7 +331,6 @@ function SideBar() {
       >
         <div className="flex flex-col py-3 h-full">
           {/* ================= HEADER ================= */}
-
           <div className="flex items-center gap-2.5 px-4 pb-3 border-b border-white/[0.06]">
             {/* desktop: collapse */}
             <button
@@ -264,10 +342,12 @@ function SideBar() {
             </button>
 
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div className="w-7 h-7 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 shadow-md shadow-indigo-500/20" />
+              <div className="w-7 h-7 shrink-0 rounded-lg bg-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+                <RaccoonLogo className="w-5 h-5" />
+              </div>
 
               <span className="text-[16px] font-semibold text-slate-100 tracking-tight truncate">
-                CortexAi
+                Kivo
               </span>
             </div>
 
@@ -294,7 +374,6 @@ function SideBar() {
           </div>
 
           {/* ================= NEW CHAT ================= */}
-
           <div className="px-4 pt-4 pb-2">
             <button
               className="w-full flex items-center justify-center gap-2 text-[13px] font-medium text-white bg-gradient-to-br from-indigo-500 via-violet-600 to-purple-700 rounded-xl py-[10px] border border-indigo-400/20 cursor-pointer shadow-md shadow-indigo-500/10 hover:shadow-lg hover:shadow-indigo-500/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
@@ -306,7 +385,6 @@ function SideBar() {
           </div>
 
           {/* ================= SECTION TITLE ================= */}
-
           <div className="px-5 pt-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">
             {conversations.length === 0 ? "No Recent Conversation" : "Recents"}
           </div>
@@ -411,9 +489,11 @@ function SideBar() {
           </div>
         </div>
       </aside>
+
       <BillingDrawer open={showBilling} onClose={() => setShowBilling(false)} />
     </>
   );
 }
 
 export default SideBar;
+

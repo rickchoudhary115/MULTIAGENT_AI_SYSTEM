@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧠 CortexAI
+# 🧠 Kivo AI
 
 ### One Workspace. Every Agent You Need.
 
@@ -20,7 +20,7 @@
 
 <br/>
 
-<img src="https://placehold.co/1200x600/0b1120/38bdf8?text=CortexAI+%E2%80%94+Multi-Agent+AI+Workspace&font=roboto" width="100%" alt="CortexAI banner"/>
+<img src="https://placehold.co/1200x600/0b1120/38bdf8?text=Kivo+%E2%80%94+Multi-Agent+AI+Workspace&font=roboto" width="100%" alt="CortexAI banner"/>
 
 *Swap this for a real screenshot or demo GIF once available — see [Screenshots](#-screenshots).*
 

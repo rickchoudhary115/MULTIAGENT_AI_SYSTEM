@@ -3,9 +3,13 @@ import { getModel } from "../config/llmModel.js";
 import { generatePdf } from "../utils/generatePdf.js";
 import { uploadToS3 } from "../utils/uploadToS3.js";
 import {  getFromS3 } from "../utils/getFromS3.js";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
 
 export const pdfAgent = async (state) => {
   try {
+        await checkAgentLimit(state.userId, "pdf");
+
     const llm = await getModel("pdf");
 
 const prompt = `
@@ -87,6 +91,8 @@ ${state.prompt}
 `;
 
     const res = await llm.invoke(prompt);
+         await deductCredicts(state.userId, "pdf", state.session);
+
 
     let content =
       typeof res.content === "string"
@@ -137,7 +143,12 @@ ${state.prompt}
 
   } catch (error) {
     console.error("❌ PDF Agent Error:", error);
-
+if (error.status == 429) {
+  return {
+    ...state,
+    aiResponse: error?.data?.message,
+  };
+}
     return {
       ...state,
       aiResponse: `❌ Failed To Generate PDF\n\n${error.message}`,

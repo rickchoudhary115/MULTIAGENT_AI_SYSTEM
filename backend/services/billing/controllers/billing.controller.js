@@ -114,15 +114,19 @@ export const verifyPayment = async (req, res) => {
     });
 
     // Update user's plan and credits
-    const authUrl = `${process.env.AUTH_SERVICE}/auth/update-plan`;
+    const authUrl = `${process.env.AUTH_SERVICE}/update-plan`;
 
     console.log("Updating Auth service:", authUrl);
 
     const authResponse = await axios.post(authUrl, {
       userId: payment.userId,
       plan: payment.plan,
-      credits: payment.credits,
-    });
+      credits: payment.credits,}
+    ,{
+    headers: {
+      Cookie: req.headers.cookie || "",
+    },
+  });
 
     console.log("Auth service response:", authResponse.data);
 

@@ -4,10 +4,15 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { getModel } from "../config/llmModel.js";
 import { vectorStore } from "../config/vectorDb.js";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
 
 const SMALL_PDF_LIMIT = 30000; // characters
 
 export const pdfRag = async (state) => {
+
+        await checkAgentLimit(state.userId, "pdf");
+
   let store;
   const collectionName = `pdf-${Date.now()}`;
   const question = state.prompt?.trim() || "Summarize this document";
@@ -96,10 +101,16 @@ Question:
 ${question}
       `),
     ]);
-
+await deductCredicts(state.userId, "pdf", state.session);
     return { ...state, aiResponse: response.content };
   } catch (error) {
     console.error("❌ PDF RAG Error:", error);
+    if (error.status == 429) {
+      return {
+        ...state,
+        aiResponse: error?.data?.message,
+      };
+    }
     return { ...state, aiResponse: "Failed to analyze PDF" };
   } finally {
     if (store) {

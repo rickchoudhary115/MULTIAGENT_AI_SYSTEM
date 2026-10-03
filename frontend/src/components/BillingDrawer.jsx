@@ -9,10 +9,6 @@ import { setUserData } from "../redux/userSlice";
 import createOrder from "../features/createOrder.js";
 import verifyPayment from "../features/verifyPayment.js";
 
-/* =========================================================
-   DISPLAY PLANS
-   Backend Plans.js remains the source of truth.
-   ========================================================= */
 
 const PLANS = [
   {
@@ -28,16 +24,13 @@ const PLANS = [
     id: "pro",
     name: "Pro",
     amount: 499,
-    credits: 500,
+    credits: 1000,
     validity: 30,
     description: "For heavy AI usage",
-    features: ["500 credits", "Priority AI access", "30 days validity"],
+    features: ["1000 credits", "Priority AI access", "30 days validity"],
   },
 ];
 
-/* =========================================================
-   RAZORPAY
-   ========================================================= */
 
 const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
@@ -62,36 +55,15 @@ const loadRazorpay = () =>
     }
   });
 
-/* =========================================================
-   BILLING DRAWER
-   ========================================================= */
 
 function BillingDrawer({ open, onClose }) {
   const dispatch = useDispatch();
 
   const { userData } = useSelector((state) => state.user);
 
-  /*
-    Your Redux structure is:
-
-    userData
-      └── user
-           ├── userId
-           ├── name
-           ├── email
-           ├── avatar
-           ├── plan
-           ├── credits
-           ├── totalCredits
-           └── planExpiresAt
-  */
+  
 
   const user = userData?.user;
-
-  /* =========================================================
-     USER BILLING DATA
-     ========================================================= */
-
   const credits = Number(user?.credits ?? 0);
 
   const totalCredits = Number(user?.totalCredits ?? 100);
@@ -103,10 +75,7 @@ function BillingDrawer({ open, onClose }) {
 
   const isLow = totalCredits > 0 && credits / totalCredits <= 0.15;
 
-  /* =========================================================
-     PLAN EXPIRY
-     ========================================================= */
-
+ 
   const expiresAt = user?.planExpiresAt ? new Date(user.planExpiresAt) : null;
 
   const expiryText =
@@ -117,37 +86,14 @@ function BillingDrawer({ open, onClose }) {
           year: "numeric",
         })
       : null;
-
-  /* =========================================================
-     LOCAL STATE
-     ========================================================= */
-
   const [loadingPlan, setLoadingPlan] = useState(null);
-
   const [message, setMessage] = useState(null);
-
-  /*
-    message format:
-
-    {
-      type: "success" | "error",
-      text: "..."
-    }
-  */
-
-  /* =========================================================
-     LOAD RAZORPAY WHEN DRAWER OPENS
-     ========================================================= */
 
   useEffect(() => {
     if (open) {
       loadRazorpay();
     }
   }, [open]);
-
-  /* =========================================================
-     ESCAPE KEY
-     ========================================================= */
 
   useEffect(() => {
     if (!open) {
@@ -168,19 +114,12 @@ function BillingDrawer({ open, onClose }) {
     };
   }, [open, onClose]);
 
-  /* =========================================================
-     PAYMENT
-     ========================================================= */
-
   const handlePayment = async (plan) => {
     setMessage(null);
     setLoadingPlan(plan.id);
 
     try {
-      /* -----------------------------------------------------
-         1. LOAD RAZORPAY
-         ----------------------------------------------------- */
-
+  
       const loaded = await loadRazorpay();
 
       if (!loaded) {
@@ -189,9 +128,6 @@ function BillingDrawer({ open, onClose }) {
         );
       }
 
-      /* -----------------------------------------------------
-         2. CREATE ORDER
-         ----------------------------------------------------- */
 
       const data = await createOrder({
         plan: plan.id,
@@ -352,18 +288,13 @@ function BillingDrawer({ open, onClose }) {
     }
   };
 
-  /* =========================================================
-     RENDER
-     ========================================================= */
+  
 
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* =================================================
-              OVERLAY
-              ================================================= */}
-
+          
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
@@ -372,10 +303,7 @@ function BillingDrawer({ open, onClose }) {
             className="fixed inset-0 bg-black z-[55]"
           />
 
-          {/* =================================================
-              DRAWER
-              ================================================= */}
-
+         
           <motion.div
             role="dialog"
             aria-label="Billing"
@@ -409,15 +337,8 @@ function BillingDrawer({ open, onClose }) {
               </button>
             </div>
 
-            {/* =================================================
-                SCROLLABLE CONTENT
-                ================================================= */}
 
             <div className="flex-1 overflow-y-auto p-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {/* =================================================
-                  CURRENT PLAN
-                  ================================================= */}
-
               <div className="rounded-xl bg-white/[0.04] border border-white/10 p-4">
                 <div className="flex justify-between items-center">
                   <div>
@@ -437,9 +358,7 @@ function BillingDrawer({ open, onClose }) {
                   <Crown className="text-yellow-400" />
                 </div>
 
-                {/* =================================================
-                    CREDITS
-                    ================================================= */}
+              
 
                 <div className="mt-5">
                   <div className="flex items-center justify-between text-slate-400 text-sm mb-2">

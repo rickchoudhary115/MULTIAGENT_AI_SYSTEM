@@ -3,11 +3,14 @@ import { getModel } from "../config/llmModel.js";
 import axios from "axios";
 import { uploadToS3 } from "../utils/uploadToS3.js";
 import { getFromS3 } from "../utils/getFromS3.js";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
 
 export const visionAgent = async (state) => {
   try {
     console.log("🖼️ IMAGE AGENT STARTED");
     console.log("👤 User prompt:", state.prompt);
+        await checkAgentLimit(state.userId, "image");
 
     const llm = await getModel("image");
 
@@ -45,6 +48,8 @@ Return ONLY the final image-generation prompt as plain text.
 USER REQUEST:
 ${state.prompt}
 `);
+               await deductCredicts(state.userId, "vision", state.session);
+
 
     const prompt =
       typeof res.content === "string"
@@ -105,7 +110,12 @@ ${state.prompt}
 
   } catch (error) {
     console.error("\n❌ IMAGE GENERATION FAILED:", error);
-
+if (error.status == 429) {
+  return {
+    ...state,
+    aiResponse: error?.data?.message,
+  };
+}
 
 
     return {

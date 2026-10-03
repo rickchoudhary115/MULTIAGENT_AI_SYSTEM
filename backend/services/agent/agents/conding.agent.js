@@ -1,8 +1,12 @@
 import { getModel } from "../config/llmModel.js";
 import { jsonrepair } from "jsonrepair";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
 
 export const codingAgent = async (state) => {
   try {
+        await checkAgentLimit(state.userId,"coding")
+    
     const intentllm = await getModel("intent");
     const llm = await getModel("coding");
 
@@ -223,6 +227,7 @@ ${state.prompt}
         console.log("MODEL PROMPT LENGTH:", prompt.length);
 
         res = await llm.invoke(prompt);
+    await deductCredicts(state.userId, "coding");
 
         if (!res) {
           throw new Error("Coding model returned undefined response");
@@ -493,6 +498,9 @@ Do not generate project artifacts unless the user explicitly requests a project.
 
     try {
       res = await llm.invoke(prompt);
+    await deductCredicts(state.userId, "coding", state.session);
+
+
     } catch (error) {
       console.error("========== CODING MODEL ERROR ==========");
 
@@ -551,7 +559,12 @@ Do not generate project artifacts unless the user explicitly requests a project.
     console.error(error?.stack);
 
     console.error("=========================================");
-
+if (error.status == 429) {
+  return {
+    ...state,
+    aiResponse: error?.data?.message,
+  };
+}
     return {
       ...state,
 

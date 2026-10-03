@@ -11,19 +11,23 @@ import {
   Send,
   Zap,
 } from "lucide-react";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import sendMessage from "../features/sendMessage";
+
 import { addMessage, setArtifacts, setIsLoading } from "../redux/messageSlice";
+
 import { createConversation } from "../features/createConversation";
+
 import {
   addConversation,
   setSelectedConversation,
   setConvTitle,
 } from "../redux/conversationSlice";
+
 import { updateConversation } from "../features/updateConversation";
-
-
 
 function ChatInput() {
   const [value, setValue] = useState("");
@@ -32,8 +36,17 @@ function ChatInput() {
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const fileRef = useRef(null);
+
+  const { isLoading } = useSelector((state) => state.message);
+
   const { selectedConversation } = useSelector((state) => state.conversation);
+
   const dispatch = useDispatch();
+
+  // =========================
+  // IMAGE PREVIEW
+  // =========================
+
   useEffect(() => {
     if (!selectedFile || !selectedFile.type.startsWith("image/")) {
       setPreviewUrl(null);
@@ -41,85 +54,123 @@ function ChatInput() {
     }
 
     const url = URL.createObjectURL(selectedFile);
+
     setPreviewUrl(url);
 
     return () => URL.revokeObjectURL(url);
   }, [selectedFile]);
 
+  // =========================
+  // SEND MESSAGE
+  // =========================
+
   const handleSendMessage = async () => {
-    dispatch(setIsLoading(true))
     const prompt = value.trim();
 
+    // Don't send empty message
     if (!prompt) return;
+
+    // Start loading
+    dispatch(setIsLoading(true));
 
     let conversation = selectedConversation;
 
-    // Create conversation if needed
-    if (!conversation) {
-      const conv = await createConversation();
+    try {
+      // =========================
+      // CREATE CONVERSATION
+      // =========================
 
-      if (!conv?._id) {
-        console.error("Invalid conversation:", conv);
+      if (!conversation) {
+        const conv = await createConversation();
+
+        if (!conv?._id) {
+          console.error("Invalid conversation:", conv);
+          dispatch(setIsLoading(false));
+          return;
+        }
+
+        dispatch(setSelectedConversation(conv));
+        dispatch(addConversation(conv));
+
+        conversation = conv;
+      }
+
+      if (!conversation?._id) {
+        dispatch(setIsLoading(false));
         return;
       }
 
-      dispatch(setSelectedConversation(conv));
-      dispatch(addConversation(conv));
+      // =========================
+      // SET CONVERSATION TITLE
+      // =========================
 
-      conversation = conv;
-    }
+      if (conversation.title === "New Conversation") {
+        const title = prompt.slice(0, 40);
 
-    if (!conversation?._id) return;
+        await updateConversation({
+          id: conversation._id,
+          title,
+        });
 
-    // Set conversation title
-    if (conversation.title === "New Conversation") {
-      const title = prompt.slice(0, 40);
+        dispatch(
+          setConvTitle({
+            conversationId: conversation._id,
+            title,
+          }),
+        );
+      }
 
-      await updateConversation({
-        id: conversation._id,
-        title,
-      });
+      console.log("SELECTED FILE:", selectedFile);
+
+      // =========================
+      // FORMDATA
+      // =========================
+
+      const formData = new FormData();
+
+      formData.append("prompt", prompt);
+      formData.append("conversationId", conversation._id);
+      formData.append("agent", selectedAgent.toLowerCase());
+
+      if (selectedFile) {
+        formData.append("file", selectedFile);
+      }
+
+      // =========================
+      // ADD USER MESSAGE
+      // =========================
 
       dispatch(
-        setConvTitle({
-          conversationId: conversation._id,
-          title,
+        addMessage({
+          role: "user",
+          content: prompt,
+          images: [],
         }),
       );
-    }
 
-    console.log("SELECTED FILE:", selectedFile);
+      setValue("");
 
-    // FormData
-    const formData = new FormData();
+      // =========================
+      // SEND REQUEST
+      // =========================
 
-    formData.append("prompt", prompt);
-    formData.append("conversationId", conversation._id);
-    formData.append("agent", selectedAgent.toLowerCase());
-
-    if (selectedFile) {
-      formData.append("file", selectedFile);
-    }
-
-    // Add user message
-    dispatch(
-      addMessage({
-        role: "user",
-        content: prompt,
-        images: [],
-      }),
-    );
-
-    setValue("");
-
-    try {
       const data = await sendMessage(formData);
+
+      console.log("CHAT RESPONSE:", data);
+
+      // Stop loading
       dispatch(setIsLoading(false));
+
+      // Clear selected file
       setSelectedFile(null);
 
+      // Update artifacts
       dispatch(setArtifacts(data?.artifacts || []));
 
-      // Add AI response
+      // =========================
+      // ADD AI RESPONSE
+      // =========================
+
       dispatch(
         addMessage({
           role: "assistant",
@@ -128,12 +179,18 @@ function ChatInput() {
           artifacts: data?.artifacts || [],
         }),
       );
-
-      console.log("CHAT RESPONSE:", data);
     } catch (error) {
-      console.log("CHAT ERROR:", error.response?.data || error.message);
+      console.error("CHAT ERROR:", error.response?.data || error.message);
+
+      // IMPORTANT
+      // Re-enable Send button after error
+      dispatch(setIsLoading(false));
     }
   };
+
+  // =========================
+  // AGENTS
+  // =========================
 
   const agents = [
     {
@@ -196,9 +253,11 @@ function ChatInput() {
         "
       >
         {/* AGENTS */}
+
         <div className="flex w-full gap-2 pr-1 flex-wrap">
           {agents.map((agent) => {
             const isActive = selectedAgent === agent.label;
+
             const Icon = agent.icon;
 
             return (
@@ -222,6 +281,7 @@ function ChatInput() {
                   duration-200
                   select-none
                   active:scale-95
+
                   ${
                     isActive
                       ? `
@@ -257,6 +317,7 @@ function ChatInput() {
         </div>
 
         {/* SELECTED FILE */}
+
         {selectedFile && (
           <div className="flex items-center gap-3 w-fit max-w-sm px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10">
             {selectedFile.type === "application/pdf" ? (
@@ -294,6 +355,7 @@ function ChatInput() {
         )}
 
         {/* TEXTAREA */}
+
         <textarea
           placeholder="Ask anything..."
           onChange={(e) => setValue(e.target.value)}
@@ -319,8 +381,10 @@ function ChatInput() {
         />
 
         {/* BOTTOM BAR */}
+
         <div className="flex items-center justify-between pt-0.5">
           {/* LEFT BUTTONS */}
+
           <div className="flex items-center gap-1">
             <input
               type="file"
@@ -390,10 +454,11 @@ function ChatInput() {
             </button>
           </div>
 
-          {/* SEND */}
+          {/* SEND BUTTON */}
+
           <button
             type="button"
-            disabled={!value.trim()}
+            disabled={!value.trim() || isLoading}
             onClick={handleSendMessage}
             aria-label="Send message"
             className={`
@@ -406,8 +471,9 @@ function ChatInput() {
               border
               transition-all
               duration-200
+
               ${
-                value.trim()
+                value.trim() && !isLoading
                   ? `
                     bg-gradient-to-br
                     from-indigo-500

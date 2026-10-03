@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello from auth" });
 });
 
-app.use("/auth", authRouter);
+app.use("/", authRouter);
 
 app.listen(port, async () => {
   console.log(`auth is running on port ${port}`);

@@ -3,9 +3,13 @@ import { getModel } from "../config/llmModel.js";
 import { generatePpt } from "../utils/generatePpt.js";
 import { uploadToS3 } from "../utils/uploadToS3.js";
 import { getFromS3 } from "../utils/getFromS3.js";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
 
 export const pptAgent = async (state) => {
   try {
+        await checkAgentLimit(state.userId, "ppt");
+
     const llm = await getModel("ppt");
 
 const prompt = `
@@ -80,6 +84,8 @@ ${state.prompt}
     const res = await llm.invoke(prompt);
 
     const data = JSON.parse(res.content);
+                  await deductCredicts(state.userId, "ppt", state.session);
+
 
     const ppt = await generatePpt(data);
 
@@ -112,7 +118,12 @@ ${state.prompt}
 
   } catch (error) {
     console.error("❌ PPT Agent Error:", error);
-
+  if (error.status == 429) {
+    return {
+      ...state,
+      aiResponse: error?.data?.message,
+    };
+  }
     return {
       ...state,
       aiResponse: "❌ Failed To Generate PPT"

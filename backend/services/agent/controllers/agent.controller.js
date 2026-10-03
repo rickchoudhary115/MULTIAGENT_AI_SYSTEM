@@ -1,9 +1,11 @@
 import axios from "axios";
 import { graph } from "../graph/graph.js";
 import { addMessage } from "../config/memory.js";
-export const agent = async (req, res) => {
+export const agent = async (req, res ,next) => {
   try {
     const { prompt, conversationId, agent } = req.body;
+    const userId=req.headers["x-user-id"]
+    const session = req.headers.cookie;
     const file=req.file
     console.log("file", file)
     // await redis.del(`messages-${conversationId}`)
@@ -16,7 +18,9 @@ export const agent = async (req, res) => {
       prompt,
       conversationId,
       agent,
-      file:req.file, // Pass the uploaded file to the graph
+      userId,
+      session,
+      file: req.file, // Pass the uploaded file to the graph
     });
 
     await addMessage(conversationId, "user", prompt);
@@ -38,12 +42,7 @@ export const agent = async (req, res) => {
       artifacts:result?.artifacts,
     });
   } catch (error) {
-    console.error("AGENT ERROR:", error.response?.data || error.message);
-    console.error("AGENT STACK:", error.stack);
-
-    return res.status(500).json({
-      message: "Agent error",
-      error: error.response?.data || error.message,
-    });
+    
+    next(error);
   }
 };

@@ -1,9 +1,13 @@
 import { getModel } from "../config/llmModel.js";
 import fs from "fs/promises";
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
-// import { deductCredits } from "../utils/deductCredits.js";
+import { deductCredicts } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentLimits.js";
+
 export const imageAnalyzer = async (state) => {
   try {
+        await checkAgentLimit(state.userId,"image")
+    
     const llm = await getModel("imageAnalyzer");
     const imageBuffer = await fs.readFile(state.file.path);
     const base64Image = imageBuffer.toString("base64");
@@ -34,7 +38,8 @@ Your tasks:
     ];
 
     const response = await llm.invoke(messages);
-    // await deductCredits(state.userId, "vision");
+             await deductCredicts(state.userId, "vision", state.session);
+
 
     return {
       ...state,
@@ -42,6 +47,12 @@ Your tasks:
     };
   } catch (error) {
     console.log(error);
+    if (error.status == 429) {
+      return {
+        ...state,
+        aiResponse: error?.data?.message,
+      };
+    }
     return{
         ...state,
         aiResponse:"Failed to anlayze file"

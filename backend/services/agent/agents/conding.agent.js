@@ -5,8 +5,8 @@ import { checkAgentLimit } from "../config/agentLimits.js";
 
 export const codingAgent = async (state) => {
   try {
-        await checkAgentLimit(state.userId,"coding")
-    
+    await checkAgentLimit(state.userId, "coding");
+
     const intentllm = await getModel("intent");
     const llm = await getModel("coding");
 
@@ -28,6 +28,7 @@ CONVERSION
 DOCUMENTATION
 
 User Request:
+
 ${state.prompt}
 `);
 
@@ -38,14 +39,285 @@ ${state.prompt}
     console.log("CODING INTENT:", intent);
 
     // =========================================================
-    // 2. CODE GENERATION
+    // 2. PROJECT VS SIMPLE CODE
     // =========================================================
 
-    if (intent === "CODE_GENERATION") {
+    const typeRes = await intentllm.invoke(`
+You are a coding request type classifier.
+
+Determine whether the user wants a COMPLETE PROJECT/FRONTEND
+or just NORMAL/SIMPLE CODE.
+
+Return ONLY ONE value:
+
+PROJECT
+SIMPLE_CODE
+
+Use PROJECT only when the user explicitly asks for things such as:
+
+- website
+- frontend
+- UI
+- dashboard
+- landing page
+- portfolio
+- web app
+- React application
+- Vue application
+- full project
+- complete application
+- calculator website
+- frontend prototype
+- multi-file project
+
+Examples:
+
+"give me sum of two numbers in python"
+=> SIMPLE_CODE
+
+"write a python function to add two numbers"
+=> SIMPLE_CODE
+
+"reverse a string in C++"
+=> SIMPLE_CODE
+
+"explain binary search in C++"
+=> SIMPLE_CODE
+
+"debug this python code"
+=> SIMPLE_CODE
+
+"create a calculator website"
+=> PROJECT
+
+"build a React dashboard"
+=> PROJECT
+
+"make a portfolio website"
+=> PROJECT
+
+"create a landing page using HTML CSS JS"
+=> PROJECT
+
+User Request:
+
+${state.prompt}
+`);
+
+    const requestType = String(typeRes?.content || "")
+      .trim()
+      .toUpperCase();
+
+    console.log("CODING REQUEST TYPE:", requestType);
+
+    // =========================================================
+    // 3. SIMPLE CODE GENERATION
+    // =========================================================
+
+    if (
+      intent === "CODE_GENERATION" &&
+      requestType !== "PROJECT"
+    ) {
+      const prompt = `
+You are CortexAI, an expert software engineer and coding tutor.
+
+Answer the user's coding question directly.
+
+USER REQUEST:
+${state.prompt}
+
+IMPORTANT RULES:
+
+1. Follow the programming language requested by the user.
+
+2. If the user asks for Python, use Python.
+
+3. If the user asks for C++, use C++.
+
+4. If the user asks for Java, use Java.
+
+5. If the user asks for JavaScript, use JavaScript.
+
+6. Provide the necessary code.
+
+7. Also provide a short, clear explanation of what the code does.
+
+8. Include an example or expected output when useful.
+
+9. Keep the answer concise and beginner-friendly.
+
+10. Do NOT create HTML/CSS/JavaScript unless the user asks for
+web development.
+
+11. Do NOT create a frontend.
+
+12. Do NOT create a project.
+
+13. Do NOT create multiple files.
+
+14. Do NOT create an artifact.
+
+15. Do NOT add unnecessary libraries or frameworks.
+
+16. Do NOT turn a simple programming problem into a large application.
+
+Use this structure when appropriate:
+
+### Explanation
+
+Short explanation.
+
+### Code
+
+The required code.
+
+### How it works
+
+Short explanation of the important lines.
+
+### Output
+
+Expected output.
+
+Example:
+
+User:
+give me sum of two numbers in python
+
+Response:
+
+### Explanation
+
+We can add two numbers in Python using the `+` operator.
+
+\`\`\`python
+def add(a, b):
+    return a + b
+
+a = 10
+b = 20
+
+result = add(a, b)
+
+print(result)
+\`\`\`
+
+### How it works
+
+- add(a, b) takes two numbers.
+- a + b adds them.
+- return sends the result back.
+- print() displays the result.
+
+### Output
+
+30
+
+Return normal Markdown.
+`;
+
+      let res;
+
+      try {
+        console.log(
+          "========== SIMPLE CODING MODEL CALL =========="
+        );
+
+        res = await llm.invoke(prompt);
+
+        if (!res) {
+          throw new Error(
+            "Coding model returned undefined response"
+          );
+        }
+
+        console.log(
+          "========== RAW SIMPLE CODING RESPONSE =========="
+        );
+
+        console.log(res);
+      } catch (error) {
+        console.error(
+          "========== CODING MODEL ERROR =========="
+        );
+
+        console.error("MESSAGE:", error?.message);
+        console.error("STACK:", error?.stack);
+
+        return {
+          ...state,
+          aiResponse:
+            "The coding model is currently unavailable or rate-limited. Please try again.",
+          artifacts: [],
+        };
+      }
+
+      // =====================================================
+      // EXTRACT RESPONSE
+      // =====================================================
+
+      let data = "";
+
+      if (typeof res?.content === "string") {
+        data = res.content.trim();
+      } else if (Array.isArray(res?.content)) {
+        data = res.content
+          .map((item) => {
+            if (typeof item === "string") {
+              return item;
+            }
+
+            return item?.text || "";
+          })
+          .join("")
+          .trim();
+      }
+
+      console.log(
+        "========== SIMPLE CODING ANSWER =========="
+      );
+
+      console.log(data);
+
+      // =====================================================
+      // DEDUCT CREDIT
+      // =====================================================
+
+      const deduction = await deductCredicts(
+        state.userId,
+        "coding",
+        state.session
+      );
+
+      console.log(
+        "CODING CREDITS:",
+        deduction?.credits
+      );
+
+      return {
+        ...state,
+        aiResponse: data || "No response generated.",
+        artifacts: [],
+        credits: deduction?.credits,
+      };
+    }
+
+    // =========================================================
+    // 4. PROJECT / FRONTEND GENERATION
+    // =========================================================
+
+    if (
+      intent === "CODE_GENERATION" &&
+      requestType === "PROJECT"
+    ) {
       const prompt = `
 You are CortexAI, an expert frontend developer and UI/UX designer.
 
-Create a visually impressive frontend prototype for the user's request.
+The user explicitly requested a complete project.
+
+USER REQUEST:
+
+${state.prompt}
 
 ==================================================
 STACK
@@ -63,46 +335,28 @@ STACK
 DESIGN
 ==================================================
 
-The interface must look premium, modern, colorful and polished.
-
-Do NOT create a boring gray admin template.
+Create a premium, modern and polished interface.
 
 Use:
 
 - CSS variables
-- Multiple background colors
-- 3-5 accent colors
 - Gradients
 - Rounded cards
-- Soft colored shadows
-- At least one glow effect
+- Soft shadows
 - Modern typography
 - Good spacing
 - Responsive layout
 - Hover effects
 - Subtle animations
 - Strong visual hierarchy
-- Attractive navbar/header
-- Impressive first screen
 
 Choose ONE visual direction:
 
 1. Aurora
-   Indigo + violet + cyan + magenta
-
 2. Sunset
-   Coral + pink + orange + amber
-
 3. Tropical
-   Teal + lime + fuchsia
-
 4. Cyber
-   Dark + neon green + cyan + pink
-
 5. Pastel
-   Pink + lavender + mint + yellow
-
-Use a cohesive palette rather than random colors.
 
 ==================================================
 FUNCTIONALITY
@@ -115,14 +369,16 @@ Use small mock data.
 Maximum 5-8 items for lists/tables.
 
 For dashboards:
+
 - Hero/header
-- 3-4 colorful statistic cards
+- 3-4 statistic cards
 - Small table/list
 - Status badges
 - Search/filter if useful
 - One simple form or modal
 
 For landing pages:
+
 - Hero
 - Features
 - Main content
@@ -130,10 +386,10 @@ For landing pages:
 - Footer
 
 For portfolios:
+
 - Bold hero
 - Project cards
 - Hover effects
-- Different accent colors
 
 ==================================================
 DO NOT
@@ -147,42 +403,14 @@ DO NOT
 - Large SVGs
 - Base64 images
 - Unnecessary pages
-- Excessive comments
 - TODO placeholders
 - Repeated code
-- Huge components
-
-Images:
-- Use Unsplash only when images improve the design.
-- Maximum 2 images.
-- Never use placeholder images.
-- Never generate base64 images.
-
-==================================================
-CODE LIMITS
-==================================================
-
-Keep the entire response compact.
-
-index.html: maximum 80 lines
-style.css: maximum 140 lines
-script.js: maximum 50 lines
-
-Prioritize:
-
-1. Visual quality
-2. Color/design
-3. Responsive layout
-4. Core interaction
-5. Completeness
 
 ==================================================
 OUTPUT
 ==================================================
 
 Return ONLY valid JSON.
-
-Exactly this structure:
 
 {
   "files": [
@@ -207,47 +435,33 @@ Rules:
 - No code fences
 - No explanation
 - No text outside JSON
-- All three files must be complete
-- All three files must work together
-- Keep the response compact
-- Do not truncate the JSON
+- All files must be complete
+- All files must work together
 - Do not add additional files
-
-==================================================
-USER REQUEST
-==================================================
-
-${state.prompt}
+- Keep the response compact
 `;
 
       let res;
 
       try {
-        console.log("========== CODING MODEL CALL ==========");
-        console.log("MODEL PROMPT LENGTH:", prompt.length);
+        console.log(
+          "========== PROJECT CODING MODEL CALL =========="
+        );
 
         res = await llm.invoke(prompt);
-    await deductCredicts(state.userId, "coding");
 
         if (!res) {
-          throw new Error("Coding model returned undefined response");
+          throw new Error(
+            "Coding model returned undefined response"
+          );
         }
-
-        console.log("========== RAW CODING RESPONSE ==========");
-        console.log(res);
-        console.log("==========================================");
       } catch (error) {
-        console.error("========== CODING MODEL ERROR ==========");
-        console.error("MESSAGE:", error?.message);
-        console.error("NAME:", error?.name);
-        console.error("STACK:", error?.stack);
+        console.error(
+          "========== CODING MODEL ERROR =========="
+        );
 
-        if (error?.response) {
-          console.error("HTTP STATUS:", error.response.status);
-          console.error("HTTP DATA:", error.response.data);
-        }
-
-        console.error("========================================");
+        console.error(error?.message);
+        console.error(error?.stack);
 
         return {
           ...state,
@@ -257,9 +471,9 @@ ${state.prompt}
         };
       }
 
-      // =========================================================
-      // 3. CHECK MODEL FINISH REASON
-      // =========================================================
+      // =====================================================
+      // CHECK FINISH REASON
+      // =====================================================
 
       const finishReason =
         res?.response_metadata?.finish_reason ||
@@ -271,18 +485,17 @@ ${state.prompt}
         res?.response_metadata?.usage?.completion_tokens ||
         0;
 
-      console.log("CODING FINISH REASON:", finishReason);
-      console.log("CODING OUTPUT TOKENS:", outputTokens);
+      console.log(
+        "CODING FINISH REASON:",
+        finishReason
+      );
+
+      console.log(
+        "CODING OUTPUT TOKENS:",
+        outputTokens
+      );
 
       if (finishReason === "length") {
-        console.error("========== CODING RESPONSE TRUNCATED ==========");
-
-        console.error("The coding model reached its output token limit.");
-
-        console.error("Output tokens:", outputTokens);
-
-        console.error("===============================================");
-
         return {
           ...state,
           aiResponse:
@@ -291,9 +504,9 @@ ${state.prompt}
         };
       }
 
-      // =========================================================
-      // 4. EXTRACT CONTENT
-      // =========================================================
+      // =====================================================
+      // EXTRACT CONTENT
+      // =====================================================
 
       let text = "";
 
@@ -313,23 +526,17 @@ ${state.prompt}
       }
 
       if (!text) {
-        console.error("EMPTY CODING MODEL RESPONSE:", res);
-
         return {
           ...state,
           aiResponse:
-            "The coding model returned an empty response. Please try again.",
+            "The coding model returned an empty response.",
           artifacts: [],
         };
       }
 
-      console.log("========== CODING CONTENT ==========");
-      console.log(text);
-      console.log("====================================");
-
-      // =========================================================
-      // 5. REMOVE MARKDOWN CODE FENCES
-      // =========================================================
+      // =====================================================
+      // REMOVE MARKDOWN FENCES
+      // =====================================================
 
       text = text
         .replace(/^```json\s*/i, "")
@@ -337,78 +544,74 @@ ${state.prompt}
         .replace(/\s*```$/i, "")
         .trim();
 
-      // =========================================================
-      // 6. FIND JSON
-      // =========================================================
+      // =====================================================
+      // FIND JSON
+      // =====================================================
 
       const start = text.indexOf("{");
       const end = text.lastIndexOf("}");
 
-      if (start === -1 || end === -1 || end <= start) {
-        console.error("========== NO JSON FOUND ==========");
-        console.error("MODEL RESPONSE:");
-        console.error(text);
-        console.error("===================================");
-
+      if (
+        start === -1 ||
+        end === -1 ||
+        end <= start
+      ) {
         return {
           ...state,
           aiResponse:
-            "The coding model did not return valid project JSON. Please try again.",
+            "The coding model did not return valid project JSON.",
           artifacts: [],
         };
       }
 
       text = text.substring(start, end + 1);
 
-      // =========================================================
-      // 7. PARSE JSON
-      // =========================================================
+      // =====================================================
+      // PARSE JSON
+      // =====================================================
 
       let data;
 
       try {
         data = JSON.parse(text);
-
-        console.log("JSON.parse SUCCESS");
       } catch (error) {
-        console.warn("PRIMARY JSON.parse FAILED:", error?.message);
+        console.warn(
+          "PRIMARY JSON.parse FAILED:",
+          error?.message
+        );
 
         try {
           const repaired = jsonrepair(text);
 
           data = JSON.parse(repaired);
 
-          console.log("JSON REPAIR SUCCEEDED");
+          console.log(
+            "JSON REPAIR SUCCEEDED"
+          );
         } catch (repairError) {
-          console.error("========== JSON PARSE ERROR ==========");
-
-          console.error(repairError?.message);
-
-          console.error("======================================");
-
-          console.error("BROKEN JSON:");
-          console.error(text);
+          console.error(
+            "JSON REPAIR FAILED:",
+            repairError?.message
+          );
 
           return {
             ...state,
             aiResponse:
-              "The coding model returned malformed project data. Please try again.",
+              "The coding model returned malformed project data.",
             artifacts: [],
           };
         }
       }
 
-      // =========================================================
-      // 8. VALIDATE FILES
-      // =========================================================
+      // =====================================================
+      // VALIDATE FILES
+      // =====================================================
 
       if (!data || !Array.isArray(data.files)) {
-        console.error("INVALID FILES:", data);
-
         return {
           ...state,
           aiResponse:
-            "The coding model returned invalid project files. Please try again.",
+            "The coding model returned invalid project files.",
           artifacts: [],
         };
       }
@@ -417,97 +620,130 @@ ${state.prompt}
         (file) =>
           file &&
           typeof file.name === "string" &&
-          typeof file.content === "string",
+          typeof file.content === "string"
       );
 
       if (validFiles.length === 0) {
-        console.error("NO VALID FILES:", data);
-
         return {
           ...state,
-          aiResponse: "No valid files were generated. Please try again.",
+          aiResponse:
+            "No valid files were generated.",
           artifacts: [],
         };
       }
 
-      // =========================================================
-      // 9. LIMIT GENERATED FILES
-      // =========================================================
-
       const finalFiles = validFiles.slice(0, 3);
 
-      console.log("========== GENERATED FILES ==========");
+      console.log(
+        "========== GENERATED FILES =========="
+      );
 
       finalFiles.forEach((file, index) => {
-        console.log(`FILE ${index}:`, file.name);
+        console.log(
+          `FILE ${index}:`,
+          file.name
+        );
       });
 
-      console.log("=====================================");
+      // =====================================================
+      // DEDUCT CREDIT
+      // =====================================================
 
-      // =========================================================
-      // 10. RETURN ARTIFACT
-      // =========================================================
+      const deduction = await deductCredicts(
+        state.userId,
+        "coding",
+        state.session
+      );
+
+      // =====================================================
+      // RETURN PROJECT
+      // =====================================================
 
       return {
         ...state,
 
-        aiResponse: "Code Generated Successfully",
+        aiResponse:
+          "Code Generated Successfully",
 
         artifacts: [
           {
             id: Date.now(),
             type: "Project",
             title: state.prompt,
-
             files: finalFiles,
           },
         ],
+
+        credits: deduction?.credits,
       };
     }
 
     // =========================================================
-    // 11. OTHER CODING REQUESTS
+    // 5. OTHER CODING REQUESTS
     // =========================================================
 
     const prompt = `
-You are CortexAI, an expert software engineer.
+You are CortexAI, an expert software engineer and coding tutor.
 
 User request:
 
 ${state.prompt}
 
 Intent:
+
 ${intent}
 
-Return concise Markdown.
+Answer the user's request clearly.
 
-Use:
+IMPORTANT:
 
-# Overview
-## Explanation
-## Problems
-## Improvements
-## Best Practices
+- Follow the requested programming language.
+- Provide code when code is needed.
+- Explain the important parts.
+- Include examples when useful.
+- Keep the response concise.
+- Do not create project artifacts.
+- Do not create frontend projects unless explicitly requested.
+- Do not generate multiple files.
 
-If code is required, provide only the necessary code.
+For simple questions use:
 
-Do not generate project artifacts unless the user explicitly requests a project.
+### Explanation
+
+Short explanation.
+
+### Code
+
+Necessary code.
+
+### How it works
+
+Brief explanation.
+
+### Output
+
+Expected output when useful.
+
+Return normal Markdown.
 `;
 
     let res;
 
     try {
       res = await llm.invoke(prompt);
-    await deductCredicts(state.userId, "coding", state.session);
 
-
+      if (!res) {
+        throw new Error(
+          "Coding model returned undefined response"
+        );
+      }
     } catch (error) {
-      console.error("========== CODING MODEL ERROR ==========");
+      console.error(
+        "========== CODING MODEL ERROR =========="
+      );
 
       console.error(error?.message);
       console.error(error?.stack);
-
-      console.error("========================================");
 
       return {
         ...state,
@@ -517,14 +753,14 @@ Do not generate project artifacts unless the user explicitly requests a project.
       };
     }
 
-    // =========================================================
-    // 12. EXTRACT NORMAL RESPONSE
-    // =========================================================
+    // =====================================================
+    // EXTRACT NORMAL RESPONSE
+    // =====================================================
 
     let data = "";
 
     if (typeof res?.content === "string") {
-      data = res.content;
+      data = res.content.trim();
     } else if (Array.isArray(res?.content)) {
       data = res.content
         .map((item) => {
@@ -534,43 +770,54 @@ Do not generate project artifacts unless the user explicitly requests a project.
 
           return item?.text || "";
         })
-        .join("");
+        .join("")
+        .trim();
     }
 
-    console.log("========== CODING ANSWER ==========");
-    console.log(data);
-    console.log("===================================");
+    // =====================================================
+    // DEDUCT CREDIT
+    // =====================================================
+
+    const deduction = await deductCredicts(
+      state.userId,
+      "coding",
+      state.session
+    );
+
+    console.log(
+      "CODING CREDITS:",
+      deduction?.credits
+    );
 
     return {
       ...state,
-
-      aiResponse: data || "No response generated.",
-
+      aiResponse:
+        data || "No response generated.",
       artifacts: [],
+      credits: deduction?.credits,
     };
-  } catch (error) {
-    // =========================================================
-    // 13. GLOBAL ERROR
-    // =========================================================
 
-    console.error("========== CODING AGENT ERROR ==========");
+  } catch (error) {
+    console.error(
+      "========== CODING AGENT ERROR =========="
+    );
 
     console.error(error?.message);
     console.error(error?.stack);
 
-    console.error("=========================================");
-if (error.status == 429) {
-  return {
-    ...state,
-    aiResponse: error?.data?.message,
-  };
-}
+    if (error?.status === 429) {
+      return {
+        ...state,
+        aiResponse:
+          "The coding model is currently rate-limited. Please try again later.",
+        artifacts: [],
+      };
+    }
+
     return {
       ...state,
-
       aiResponse:
         "The coding agent encountered an unexpected error. Please try again.",
-
       artifacts: [],
     };
   }

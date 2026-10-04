@@ -28,6 +28,7 @@ CONVERSION
 DOCUMENTATION
 
 User Request:
+
 ${state.prompt}
 `);
 
@@ -99,6 +100,7 @@ Examples:
 => PROJECT
 
 User Request:
+
 ${state.prompt}
 `);
 
@@ -114,11 +116,12 @@ ${state.prompt}
 
     if (intent === "CODE_GENERATION" && requestType !== "PROJECT") {
       const prompt = `
-You are CortexAI, an expert software engineer and coding tutor.
+You are Kivo, an expert software engineer and coding tutor.
 
 Answer the user's coding question directly.
 
 USER REQUEST:
+
 ${state.prompt}
 
 IMPORTANT RULES:
@@ -165,6 +168,8 @@ Return normal Markdown.
 
       try {
         console.log("========== SIMPLE CODING MODEL CALL ==========");
+        console.log("MODEL:", llm?.constructor?.name);
+        console.log("PROMPT LENGTH:", prompt.length);
 
         res = await llm.invoke(prompt);
 
@@ -172,19 +177,27 @@ Return normal Markdown.
           throw new Error("Coding model returned undefined response");
         }
 
-        console.log("========== RAW SIMPLE CODING RESPONSE ==========");
+        console.log(
+          "========== SIMPLE CODING MODEL RESPONSE RECEIVED ==========",
+        );
 
-        console.log(res);
+        console.log("RESPONSE TYPE:", res?.constructor?.name);
+        console.log("CONTENT TYPE:", typeof res?.content);
+        console.log("RESPONSE:", res);
       } catch (error) {
         console.error("========== CODING MODEL ERROR ==========");
-
+        console.error("NAME:", error?.name);
         console.error("MESSAGE:", error?.message);
+        console.error("STATUS:", error?.status);
+        console.error("CODE:", error?.code);
         console.error("STACK:", error?.stack);
 
         return {
           ...state,
           aiResponse:
-            "The coding model is currently unavailable or rate-limited. Please try again.",
+            error?.status === 429
+              ? "The coding model is currently rate-limited. Please try again later."
+              : "The coding model failed to generate a response. Please try again.",
           artifacts: [],
         };
       }
@@ -211,7 +224,6 @@ Return normal Markdown.
       }
 
       console.log("========== SIMPLE CODING ANSWER ==========");
-
       console.log(data);
 
       // =====================================================
@@ -240,146 +252,126 @@ Return normal Markdown.
 
     if (intent === "CODE_GENERATION" && requestType === "PROJECT") {
       const prompt = `
-You are CortexAI, an expert frontend developer and UI/UX designer.
+You are Kivo, an expert frontend developer and UI/UX designer.
 
-Create a COMPLETE and WORKING frontend project for the user's request.
+Build a COMPLETE, WORKING, polished frontend for:
 
 USER REQUEST:
+
 ${state.prompt}
 
-==================================================
-TECHNOLOGY
-==================================================
+## STACK
 
-- Use HTML, CSS and vanilla JavaScript.
-- Use React/Vue/Next/etc ONLY if explicitly requested.
-- No backend.
-- No database.
-- No authentication.
+- HTML + CSS + Vanilla JavaScript
+- Use React/Vue/Next/etc. ONLY if explicitly requested
+- No backend, database, authentication, or server code
+- Maximum 3 files:
 
-==================================================
-DESIGN
-==================================================
+  - index.html
+  - style.css
+  - script.js
 
-Create a modern, premium and polished interface.
+## UI / UX
 
-Use:
+Create a modern, premium, visually attractive interface.
 
+Prioritize:
+
+- Strong visual hierarchy
+- Clean modern typography
+- Balanced spacing
 - CSS variables
-- Gradients
-- Rounded cards
+- Attractive gradients
+- Rounded cards and buttons
 - Soft shadows
-- Modern typography
-- Good spacing
-- Responsive layout
-- Hover effects
 - Subtle animations
-- Clear visual hierarchy
+- Smooth hover/focus states
+- Responsive mobile/tablet/desktop layout
+- Consistent color palette
+- Professional empty/loading/error states when relevant
 
-Choose ONE suitable visual style and keep it consistent.
+Choose ONE visual direction that fits the request:
 
-==================================================
-FUNCTIONALITY
-==================================================
+dark, minimal, glassmorphism, futuristic, elegant, colorful, or clean.
 
-Implement the important functionality requested by the user.
+Do not over-design. Keep the interface polished and easy to use.
 
-Use small mock data when necessary.
+## FUNCTIONALITY
 
-Everything visible in the UI should work.
+Implement the core functionality requested by the user.
 
-Examples:
+Interactive elements must actually work:
 
-- Buttons should work.
-- Forms should work.
-- Search should work if included.
-- Filters should work if included.
-- Modals should open and close.
-- Navigation should work.
-- Interactive elements should have appropriate behavior.
+- Buttons
+- Forms
+- Search
+- Filters
+- Tabs
+- Modals
+- Navigation
+- Toggles
+- Add/edit/delete actions
+- Progress/status updates
 
-Do not add unnecessary functionality.
+Only include functionality relevant to the request.
 
-==================================================
-KEEP THE PROJECT COMPACT
-==================================================
+Use small realistic mock data when needed.
 
-Generate ONLY the files required to run the project.
+## CODE QUALITY
 
-Maximum 3 files.
+- Keep the code compact and readable.
+- Avoid unnecessary libraries.
+- Avoid repeated code.
+- Avoid huge datasets.
+- Avoid complex charts unless specifically requested.
+- Avoid large SVGs and base64 images.
+- Use remote image URLs only when genuinely useful.
+- No TODOs, placeholders, broken functions, or unfinished sections.
+- All files must work together immediately.
+- Prioritize functionality and UX over excessive code.
 
-For a normal HTML/CSS/JS website use:
-
-1. index.html
-2. style.css
-3. script.js
-
-Keep each file reasonably small.
-
-Do NOT generate:
-
-- Backend
-- Database
-- Authentication
-- Huge datasets
-- Complex charts
-- Large SVGs
-- Base64 images
-- Unnecessary pages
-- Unnecessary libraries
-- TODO placeholders
-- Fake unfinished functions
-- Repeated code
-- Long comments
-
-Use remote image URLs only when images are useful.
-
-==================================================
-OUTPUT FORMAT
-==================================================
+## OUTPUT
 
 Return ONLY valid JSON.
 
-Use exactly this structure:
+Use exactly:
 
 {
   "files": [
     {
       "name": "index.html",
-      "content": "complete HTML here"
+      "content": "complete HTML"
     },
     {
       "name": "style.css",
-      "content": "complete CSS here"
+      "content": "complete CSS"
     },
     {
       "name": "script.js",
-      "content": "complete JavaScript here"
+      "content": "complete JavaScript"
     }
   ]
 }
 
-==================================================
-STRICT RULES
-==================================================
+## STRICT
 
-- Return JSON only.
+- JSON only.
 - No Markdown.
 - No code fences.
 - No explanation outside JSON.
+- Exactly the required files.
 - Every file must be complete.
-- All files must work together.
-- Do not leave TODOs.
-- Do not leave unfinished code.
-- Do not create additional files.
-- Keep the implementation compact.
-- Prioritize working functionality over excessive styling.
+- Escape JSON strings correctly.
+- Do not truncate or omit code.
+- Keep the total implementation reasonably compact.
 `;
 
       let res;
 
       try {
         console.log("========== PROJECT CODING MODEL CALL ==========");
+        console.log("MODEL:", llm?.constructor?.name);
+        console.log("PROMPT LENGTH:", prompt.length);
 
         res = await llm.invoke(prompt);
 
@@ -402,16 +394,23 @@ STRICT RULES
             res?.response_metadata?.usage?.completion_tokens ||
             0,
         );
+
+        console.log("RESPONSE TYPE:", res?.constructor?.name);
+        console.log("CONTENT TYPE:", typeof res?.content);
       } catch (error) {
         console.error("========== CODING MODEL ERROR ==========");
-
+        console.error("NAME:", error?.name);
         console.error("MESSAGE:", error?.message);
+        console.error("STATUS:", error?.status);
+        console.error("CODE:", error?.code);
         console.error("STACK:", error?.stack);
 
         return {
           ...state,
           aiResponse:
-            "The coding model is currently unavailable or rate-limited. Please try again.",
+            error?.status === 429
+              ? "The coding model is currently rate-limited. Please try again later."
+              : "The coding model failed to generate the project. Please try again.",
           artifacts: [],
         };
       }
@@ -431,7 +430,6 @@ STRICT RULES
         0;
 
       console.log("CODING FINISH REASON:", finishReason);
-
       console.log("CODING OUTPUT TOKENS:", outputTokens);
 
       if (finishReason === "length") {
@@ -475,7 +473,6 @@ STRICT RULES
       }
 
       console.log("========== PROJECT RAW RESPONSE ==========");
-
       console.log(text);
 
       // =====================================================
@@ -597,9 +594,7 @@ STRICT RULES
 
       return {
         ...state,
-
         aiResponse: "Code Generated Successfully",
-
         artifacts: [
           {
             id: Date.now(),
@@ -608,7 +603,6 @@ STRICT RULES
             files: finalFiles,
           },
         ],
-
         credits: deduction?.credits,
       };
     }
@@ -618,12 +612,14 @@ STRICT RULES
     // =========================================================
 
     const prompt = `
-You are CortexAI, an expert software engineer and coding tutor.
+You are Kivo, an expert software engineer and coding tutor.
 
 USER REQUEST:
+
 ${state.prompt}
 
 INTENT:
+
 ${intent}
 
 Answer the user's request clearly.
@@ -664,22 +660,33 @@ Return normal Markdown.
 
     try {
       console.log("========== OTHER CODING MODEL CALL ==========");
+      console.log("MODEL:", llm?.constructor?.name);
+      console.log("PROMPT LENGTH:", prompt.length);
 
       res = await llm.invoke(prompt);
 
       if (!res) {
         throw new Error("Coding model returned undefined response");
       }
+
+      console.log("========== OTHER CODING MODEL RESPONSE RECEIVED ==========");
+
+      console.log("RESPONSE TYPE:", res?.constructor?.name);
+      console.log("CONTENT TYPE:", typeof res?.content);
     } catch (error) {
       console.error("========== CODING MODEL ERROR ==========");
-
+      console.error("NAME:", error?.name);
       console.error("MESSAGE:", error?.message);
+      console.error("STATUS:", error?.status);
+      console.error("CODE:", error?.code);
       console.error("STACK:", error?.stack);
 
       return {
         ...state,
         aiResponse:
-          "The coding model is currently unavailable or rate-limited. Please try again.",
+          error?.status === 429
+            ? "The coding model is currently rate-limited. Please try again later."
+            : "The coding model failed to generate a response. Please try again.",
         artifacts: [],
       };
     }
@@ -725,8 +732,10 @@ Return normal Markdown.
     };
   } catch (error) {
     console.error("========== CODING AGENT ERROR ==========");
-
+    console.error("NAME:", error?.name);
     console.error("MESSAGE:", error?.message);
+    console.error("STATUS:", error?.status);
+    console.error("CODE:", error?.code);
     console.error("STACK:", error?.stack);
 
     if (error?.status === 429) {

@@ -28,7 +28,7 @@ const openrouter = new ChatOpenAI({
 
     defaultHeaders: {
       "HTTP-Referer": "http://localhost:5173",
-      "X-Title": "CortexAI",
+      "X-Title": "Kivo AI",
     },
   },
 });
@@ -36,19 +36,20 @@ const openrouter = new ChatOpenAI({
 export const getModel = (agent) => {
   switch (agent) {
     case "chat":
-      return groq;
+      return groq.withFallbacks({ fallbacks: [gemini] });
 
     case "search":
       return gemini;
 
     case "coding":
-      return openrouter;
+      return openrouter.withFallbacks({ fallbacks: [gemini] });
+
 
     case "imageAnalyzer":
       return gemini;
 
     case "intent":
-      return groq;
+      return gemini;
 
     default:
       return groq;

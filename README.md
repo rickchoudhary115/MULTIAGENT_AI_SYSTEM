@@ -1,251 +1,381 @@
 <div align="center">
 
-# 🧠 CortexAI
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:020617,35:1e1b4b,70:4f46e5,100:8b5cf6&height=200&section=header&text=KIVO%20AI&fontSize=64&fontColor=ffffff&fontAlignY=40&animation=twinkling" width="100%" alt="Kivo AI banner"/>
 
-### One Workspace. Every Agent You Need.
+<img width="120" height="120" alt="kivo-logo" src="https://github.com/user-attachments/assets/07f3e72d-5832-4d07-a516-703f80b71878" />
 
-**Chat • Code • Search • Documents • Vision — routed intelligently, not bolted together.**
+<h1>Kivo AI</h1>
 
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![Express](https://img.shields.io/badge/Express-Gateway-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Agent%20Routing-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://www.langchain.com/langgraph)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Persistence-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Redis](https://img.shields.io/badge/Redis-Sessions%20%26%20Memory-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
-[![Firebase](https://img.shields.io/badge/Firebase-Auth-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Tailwind](https://img.shields.io/badge/TailwindCSS-Dark%20UI-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+<h3>One Workspace. Every AI Agent You Need.</h3>
 
-[![Status](https://img.shields.io/badge/status-actively%20building-blue?style=flat-square)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](#-contributing)
-[![Made by](https://img.shields.io/badge/made%20by-Rick%20Choudhury-orange?style=flat-square)]()
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1400&color=C4B5FD&center=true&vCenter=true&width=850&lines=One+Workspace.+Every+AI+Agent+You+Need.;Chat.+Code.+Search.+RAG.+Vision.;Generate+PDFs.+Create+PPTs.+Analyze+Images.;Your+request.+The+right+agent.+One+workspace.;Powered+by+LangGraph+%7C+RAG+%7C+AI+Agents;Built+for+the+next+generation+of+AI+workflows." alt="Kivo AI typing animation"/>
 
+<br/><br/>
+
+![React](https://img.shields.io/badge/React-1e1b4b?style=for-the-badge&logo=react&logoColor=C4B5FD)
+![Vite](https://img.shields.io/badge/Vite-1e1b4b?style=for-the-badge&logo=vite&logoColor=C4B5FD)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-1e1b4b?style=for-the-badge&logo=tailwindcss&logoColor=C4B5FD)
+![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-1e1b4b?style=for-the-badge&logo=redux&logoColor=C4B5FD)
+![Node.js](https://img.shields.io/badge/Node.js-1e1b4b?style=for-the-badge&logo=node.js&logoColor=C4B5FD)
+![Express](https://img.shields.io/badge/Express-1e1b4b?style=for-the-badge&logo=express&logoColor=C4B5FD)
 <br/>
+![LangChain](https://img.shields.io/badge/LangChain-1e1b4b?style=for-the-badge&logo=langchain&logoColor=C4B5FD)
+![LangGraph](https://img.shields.io/badge/LangGraph-1e1b4b?style=for-the-badge&logoColor=C4B5FD)
+![MongoDB](https://img.shields.io/badge/MongoDB-1e1b4b?style=for-the-badge&logo=mongodb&logoColor=C4B5FD)
+![Redis](https://img.shields.io/badge/Redis-1e1b4b?style=for-the-badge&logo=redis&logoColor=C4B5FD)
+![Firebase](https://img.shields.io/badge/Firebase-1e1b4b?style=for-the-badge&logo=firebase&logoColor=C4B5FD)
+![Docker](https://img.shields.io/badge/Docker-1e1b4b?style=for-the-badge&logo=docker&logoColor=C4B5FD)
+![Razorpay](https://img.shields.io/badge/Razorpay-1e1b4b?style=for-the-badge&logo=razorpay&logoColor=C4B5FD)
 
-<img src="https://placehold.co/1200x600/0b1120/38bdf8?text=CortexAI+%E2%80%94+Multi-Agent+AI+Workspace&font=roboto" width="100%" alt="CortexAI banner"/>
+<br/><br/>
 
-*Swap this for a real screenshot or demo GIF once available — see [Screenshots](#-screenshots).*
+![Chat](https://img.shields.io/badge/Chat_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![Coding](https://img.shields.io/badge/Coding_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![Search](https://img.shields.io/badge/Search_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![PDF](https://img.shields.io/badge/PDF_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![PPT](https://img.shields.io/badge/PPT_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![Vision](https://img.shields.io/badge/Vision_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+![RAG](https://img.shields.io/badge/RAG_Agent-6d28d9?style=flat-square&labelColor=1e1b4b)
+
+<br/><br/>
+
+### A multi-agent AI workspace for conversation, coding, web search, documents, images, RAG and more, all in one place.
+
+[**✨ Why Kivo**](#-why-kivo) •
+[**🤖 Agents**](#-meet-the-agents) •
+[**🏗️ Architecture**](#%EF%B8%8F-architecture) •
+[**⚡ Quick Start**](#-quick-start) •
+[**🗺️ Roadmap**](#%EF%B8%8F-roadmap)
 
 </div>
 
 <br/>
 
-## 🎯 The Problem
+> [!NOTE]
+> **Chat. Code. Search. Documents. Presentations. Vision. Knowledge.** Instead of forcing one model to do everything, Kivo routes each request to a specialized agent through **LangGraph**.
 
-Most people juggle **four or five separate AI tools** to get through a single day of work:
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-- One tab for ChatGPT-style conversation
-- Another for a coding copilot
-- Another for a search tool because the assistant's knowledge is stale
-- A different app entirely for "explain this PDF" or "summarize this slide deck"
-- And yet another for asking questions about a screenshot or image
-
-Each tool has its own login, its own context window, its own history that doesn't talk to the others. You end up **copy-pasting between AI tools** just to finish one task — which defeats the point of having AI in the first place.
-
-Most single-model chat apps make this worse by trying to cram every capability into one giant prompt, which makes the assistant slower, less accurate, and harder to extend. Bolting "web search" or "vision" onto one chat thread often means the interface becomes bloated and the routing logic becomes messy.
-
-## 💡 Why CortexAI
-
-**CortexAI treats different kinds of requests as genuinely different problems**, instead of forcing one model to be mediocre at all of them.
-
-Under the hood, a **LangGraph router** looks at intent first — *is this a conversation, a coding task, a search query, a document question, or an image question?* — and only then hands the request to the right agent.
-
-- 🗨️ Ask a general question → the **Chat Agent** answers conversationally
-- 🧑‍💻 Ask for a login page → the **Coding Agent** classifies it as `code_generation` and returns structured files as artifacts, not a wall of text
-- 🔎 Ask about something recent → the **Search Agent** pulls fresh, cited results via **Tavily**
-- 📄 Ask about a document → **PDF/PPT agents** take over
-- 🖼️ Ask about an image ��� the **Vision Agent** handles it
-
-All of it sits behind one login, one conversation history, and one UI — so the "switching tabs" problem disappears.
-
-<br/>
-
-## ✨ Features
+## ✨ Why Kivo?
 
 <table>
 <tr>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
-### 💬 AI Chat
-Persistent, context-aware conversations with Markdown rendering and separate history per conversation.
+### 😕 One chatbot for everything
 
-</td>
-<td width="33%" valign="top">
-
-### 👨‍💻 Coding Agent
-Classifies intent — generation, debugging, explanation, review, DSA, architecture, DB, API, frontend, DevOps — and responds accordingly.
+- A single model handles every task
+- Switching between tools for code, research and documents
+- Large code dumped inside chat bubbles
+- Hard to extend with new capabilities
 
 </td>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
-### 🧩 Structured Code Artifacts
-Generated files (e.g. `Login.jsx`, `Login.css`, `api.js`) render in a dedicated **Artifact Panel**, separate from the chat.
+### 🚀 Kivo's approach
 
-</td>
-</tr>
-<tr>
-<td width="33%" valign="top">
-
-### 🔎 Web Search
-Routed to a dedicated **Search Agent** powered by **Tavily** — results, sources, summaries, and images.
-
-</td>
-<td width="33%" valign="top">
-
-### 🖼️ Image Search & Preview
-Thumbnails, click-to-expand, and lightbox-style previews for search-result images.
-
-</td>
-<td width="33%" valign="top">
-
-### 📄 Document & Vision Workflows
-Architecture in place for PDF/PPT understanding and vision-based requests, extensible without touching core chat logic.
-
-</td>
-</tr>
-<tr>
-<td width="33%" valign="top">
-
-### 🔐 Firebase + Session Auth
-Google login via Firebase, verified server-side, backed by **Redis** sessions and protected API routes.
-
-</td>
-<td width="33%" valign="top">
-
-### 💾 Persistent Conversations
-**MongoDB** stores conversations and messages; **Redis** holds sessions and short-term agent memory.
-
-</td>
-<td width="33%" valign="top">
-
-### 🎨 Dark AI-Workspace UI
-React + Tailwind interface: sidebar, chat area, and artifact panel — laid out like a real workspace, not just a chat box.
+- A **router** detects the task type first
+- A **specialized agent** handles each request
+- Code appears as **structured files** in an artifact panel
+- New agents plug into the graph easily
 
 </td>
 </tr>
 </table>
 
-<br/>
-
-## 🧠 Multi-Agent Architecture
-
-CortexAI doesn't treat every request as the same kind of AI problem. It figures out **what** the user wants before deciding **who** should answer.
-
 ```mermaid
-flowchart TD
-    USER[User] --> GATEWAY[API Gateway]
+flowchart TB
+    U([👤 User]) --> G[🚪 API Gateway]
+    G --> R{{🧭 LangGraph Router}}
+    R --> C[💬 Chat]
+    R --> D[💻 Coding]
+    R --> S[🔎 Search]
+    R --> P[📄 PDF]
+    R --> T[📊 PPT]
+    R --> V[🖼️ Vision]
+    R --> K[🧠 RAG]
+    C & D & S & P & T & V & K --> A([✅ AI Response])
 
-    GATEWAY --> AUTH[Auth Service]
-    GATEWAY --> AGENT[Agent Service]
-
-    AGENT --> GRAPH[LangGraph]
-    GRAPH --> ROUTER[Router Agent]
-
-    ROUTER --> CHAT[Chat Agent]
-    ROUTER --> CODING[Coding Agent]
-    ROUTER --> SEARCH[Search Agent]
-    ROUTER --> PDF[PDF Agent]
-    ROUTER --> PPT[PPT Agent]
-    ROUTER --> VISION[Vision Agent]
-
-    CHAT --> LLM[LLM Provider]
-    CODING --> LLM
-    SEARCH --> TAVILY[Tavily]
-    PDF --> LLM
-    PPT --> LLM
-    VISION --> LLM
-
-    AGENT --> REDIS[(Redis)]
-    AGENT --> MONGO[(MongoDB)]
+    style U fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style G fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+    style R fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style C fill:#4338ca,color:#fff,stroke:#a5b4fc,stroke-width:2px
+    style D fill:#5b21b6,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style S fill:#6366f1,color:#fff,stroke:#e0e7ff,stroke-width:2px
+    style P fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style T fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+    style V fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style K fill:#4338ca,color:#fff,stroke:#a5b4fc,stroke-width:2px
+    style A fill:#5b21b6,color:#fff,stroke:#c4b5fd,stroke-width:2px
 ```
 
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+
+## 🤖 Meet the Agents
+
+| | Agent | What it does | Powered by |
+| :---: | :--- | :--- | :--- |
+| 💬 | **Chat** | Natural, context-aware, multi-turn conversations with Markdown replies | LLM |
+| 💻 | **Coding** | Generates, debugs, explains and reviews code, and returns structured files | LLM |
+| 🔎 | **Search** | Real-time web search with summaries, sources and image previews | Tavily |
+| 📄 | **PDF** | Summarize, ask questions and extract information from PDFs | LLM |
+| 📊 | **PPT** | Understand slides, summarize and extract content from presentations | LLM |
+| 🖼️ | **Vision** | Analyze images, screenshots and UI designs | Vision model |
+| 🧠 | **RAG** | Answers grounded in retrieved knowledge instead of model memory alone | Retriever + LLM |
+
+<details>
+<summary><b>💻 Coding Agent in detail</b></summary>
 <br/>
 
-## 🔀 Request Lifecycle
+**Supported tasks:** code generation · debugging · explanation · code review · DSA & algorithms · frontend · backend · APIs · database design · architecture · DevOps & deployment.
+
+Instead of pasting huge code blocks into chat, the agent produces **structured artifacts**:
+
+```mermaid
+flowchart LR
+    A["Create a React auth page"] --> B[Coding Agent]
+    B --> C[Intent Detection]
+    C --> D[Code Generation]
+    D --> E["Login.jsx<br/>Login.css<br/>api.js"]
+    E --> F[🗂️ Artifact Panel]
+```
+
+</details>
+
+<details>
+<summary><b>🔎 Search Agent in detail</b></summary>
+<br/>
+
+Powered by **Tavily**: real-time web search, result summaries, source references, image search and previews, and recent information retrieval.
+
+</details>
+
+<details>
+<summary><b>🧠 RAG in detail</b></summary>
+<br/>
+
+Rather than relying only on the model's internal knowledge, RAG retrieves relevant information and passes it as context, which suits custom knowledge, user-provided information, documents, knowledge bases and domain-specific data.
+
+```mermaid
+flowchart LR
+    Q[User Query] --> R[Retriever] --> K[Relevant Knowledge] --> X[Context] --> L[LLM] --> G([Grounded Response])
+```
+
+</details>
+
+<details>
+<summary><b>🖼️ Vision, 📄 PDF and 📊 PPT agents in detail</b></summary>
+<br/>
+
+- **Vision:** image understanding, screenshot analysis, object/content identification, visual explanations, UI screenshot analysis. Requests are routed to the Vision agent rather than treated as normal chat.
+- **PDF:** document understanding, summarization, question answering, information extraction, PDF-based conversations.
+- **PPT:** presentation analysis, slide understanding, summarization, question answering, content extraction.
+
+</details>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+
+<!--
+📸 SCREENSHOTS: when you have them, put images in a `screenshots/` folder and uncomment this section.
+
+## 📸 Screenshots
+
+<div align="center">
+<img src="screenshots/chat.png" alt="Chat workspace" width="92%"/>
+<br/><br/>
+<table>
+<tr>
+<td align="center"><b>💻 Code Artifact Panel</b><br/><img src="screenshots/artifact.png" width="100%"/></td>
+<td align="center"><b>🔎 Web Search</b><br/><img src="screenshots/search.png" width="100%"/></td>
+</tr>
+<tr>
+<td align="center"><b>🖼️ Image Analysis</b><br/><img src="screenshots/vision.png" width="100%"/></td>
+<td align="center"><b>💳 Billing & Plans</b><br/><img src="screenshots/billing.png" width="100%"/></td>
+</tr>
+</table>
+</div>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+-->
+
+## 🏗️ Architecture
+
+Kivo follows a **service-oriented architecture**: authentication, AI workloads and billing are separate services behind one gateway.
+
+```mermaid
+flowchart TB
+    FE["🖥️ React Frontend<br/>Vite · Tailwind · Redux"] --> GW["🚪 API Gateway<br/>Express"]
+
+    GW --> AUTH["🔐 Auth Service<br/>Firebase"]
+    GW --> AGENT["🤖 Agent Service<br/>LangChain · LangGraph"]
+    GW --> BILL["💳 Billing Service<br/>Razorpay"]
+
+    AUTH --> REDIS[("⚡ Redis<br/>Sessions")]
+    AGENT --> ROUTER{{"🧭 Agent Router"}}
+
+    ROUTER --> A1[Chat]
+    ROUTER --> A2[Coding]
+    ROUTER --> A3[Search]
+    ROUTER --> A4[PDF]
+    ROUTER --> A5[PPT]
+    ROUTER --> A6[Vision]
+    ROUTER --> A7[RAG]
+
+    A1 & A2 & A3 & A4 & A5 & A6 & A7 --> MODELS["🧠 Model Layer<br/>Groq · Gemini · OpenRouter"]
+    MODELS --> DB[("🍃 MongoDB")]
+    BILL --> DB
+
+    style FE fill:#6366f1,color:#fff,stroke:#e0e7ff,stroke-width:2px
+    style GW fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style AUTH fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+    style AGENT fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style BILL fill:#4338ca,color:#fff,stroke:#a5b4fc,stroke-width:2px
+    style REDIS fill:#5b21b6,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style ROUTER fill:#6366f1,color:#fff,stroke:#e0e7ff,stroke-width:2px
+    style MODELS fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style DB fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+```
+
+### 🔀 Request Lifecycle
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant FE as React Frontend
-    participant GW as API Gateway
-    participant AU as Auth Service
-    participant AG as Agent Service (LangGraph)
-    participant EXT as LLM / Tavily
-    participant DB as MongoDB / Redis
+    actor U as User
+    participant F as React Frontend
+    participant G as API Gateway
+    participant A as Agent Service
+    participant R as LangGraph Router
+    participant M as Model / Tool
+    participant D as MongoDB / Redis
 
-    U->>FE: Type message / request
-    FE->>GW: POST request (session cookie)
-    GW->>AU: Validate session
-    AU->>DB: Check Redis session
-    AU-->>GW: Session valid
-    GW->>AG: Forward request
-    AG->>AG: Classify intent (chat / coding / search / pdf / ppt / vision)
-    AG->>EXT: Call matching model / tool
-    EXT-->>AG: Response
-    AG->>DB: Persist conversation & message (MongoDB)
-    AG-->>GW: Structured response
-    GW-->>FE: Response payload
-    FE-->>U: Render as text, code artifact, or image result
+    U->>F: Send message
+    F->>G: API request
+    G->>G: Verify authentication
+    G->>A: Forward request
+    A->>R: Classify the task
+    R->>M: Run the right agent
+    M-->>A: Agent response
+    A->>D: Persist conversation
+    A-->>F: Response
+    F-->>U: Render message / artifact
 ```
 
-<br/>
+### 🧠 Model Selection Layer
 
-## 🧑‍💻 Coding Intelligence in Action
+Agents are not tied to one model. A shared `getModel()` layer lets each agent use a different provider, so models can be swapped without rewriting the agent architecture.
 
-The coding agent doesn't just "write code" — it first figures out **what** kind of coding help is being asked for, then shapes the response format to match.
+```mermaid
+flowchart LR
+    GM["getModel()"] --> C[Chat] & D[Coding] & V[Vision]
+    C & D & V --> P{Providers}
+    P --> G1[Groq]
+    P --> G2[Google Gemini]
+    P --> G3[OpenRouter]
+
+    style GM fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style C fill:#4338ca,color:#fff,stroke:#a5b4fc,stroke-width:2px
+    style D fill:#5b21b6,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style V fill:#6366f1,color:#fff,stroke:#e0e7ff,stroke-width:2px
+    style G1 fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style G2 fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+    style G3 fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
+```
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+
+## 🧩 The Workspace UI
+
+Kivo's frontend is built as an **AI workspace**, not just a chat window.
 
 ```text
-"Why am I getting Cannot read properties of undefined?"
-                    │
-                    ▼
-              Intent Classifier
-                    │
-                    ▼
-              code_debugging
-                    │
-                    ▼
-           Focused Debugging Response
-
-
-"Create a React authentication page"
-                    │
-                    ▼
-              code_generation
-                    │
-                    ▼
-             Structured JSON
-                    │
-                    ▼
-      Login.jsx · Login.css · api.js
-                    │
-                    ▼
-             Artifact Panel
+┌────────────────┬───────────────────────────┬─────────────────┐
+│    Sidebar     │         Chat Area         │ Artifact Panel  │
+│                │                           │                 │
+│ Conversations  │    User / AI messages     │ Generated files │
+│ Billing        │    Chat input             │ Code preview    │
+└────────────────┴───────────────────────────┴─────────────────┘
 ```
 
-Supported coding intents: **generation, debugging, explanation, review, DSA/algorithms, architecture, database, API/backend, frontend, DevOps & deployment.**
+**Frontend stack:** React · Vite · Tailwind CSS · Redux Toolkit · Axios · Firebase · Motion · React Markdown · Monaco Editor · Lucide Icons
 
-<br/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-## 🔌 Model Selection Layer
+## 💳 Billing & Credits
 
-Agents don't call a hardcoded model directly — they go through a shared model-selection layer, making it easy to swap providers without touching agent logic:
+A credit-based SaaS model: users pick a plan and spend credits as they use AI agents. Payment processing is kept separate from AI workloads.
 
-```text
-                getModel()
-                    │
-        ┌───────────┼───────────┐
-        ▼           ▼           ▼
-       Chat       Search      Coding
-        │           │           │
-        ▼           ▼           ▼
-   Groq / Gemini   Tavily    Groq / Gemini / OpenRouter
+| Feature | Details |
+| :--- | :--- |
+| 🆓 Plans | Free · Starter · Pro |
+| 🪙 Usage | Credit-based, managed server-side |
+| ⏳ Expiry | Plan expiration support |
+| 💸 Payments | Razorpay with server-side verification |
+| 🔒 APIs | Protected billing routes |
+
+```mermaid
+flowchart LR
+    A[Select Plan] --> B[Create Razorpay Order] --> C[Payment] --> D[Verify Payment] --> E[Update Plan] --> F[Add Credits] --> G([Use AI Agents])
+    style A fill:#4338ca,color:#fff,stroke:#a5b4fc,stroke-width:2px
+    style B fill:#5b21b6,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style C fill:#6366f1,color:#fff,stroke:#e0e7ff,stroke-width:2px
+    style D fill:#4f46e5,color:#fff,stroke:#c4b5fd,stroke-width:2px
+    style E fill:#6d28d9,color:#fff,stroke:#ddd6fe,stroke-width:2px
+    style G fill:#7c3aed,color:#fff,stroke:#c4b5fd,stroke-width:2px
 ```
 
-<br/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+
+## 🔐 Authentication & Security
+
+```mermaid
+flowchart LR
+    U[User] --> F[Firebase Auth] --> A[Auth Service] --> S[Create Session] --> R[(Redis)] --> C[HTTP-only Cookie] --> G[Protected API Gateway]
+```
+
+| Currently implemented | Recommended for production |
+| :--- | :--- |
+| ✅ Firebase authentication | 🔲 HTTPS everywhere |
+| ✅ Server-side token verification | 🔲 Secure cookie configuration |
+| ✅ Redis-backed sessions | 🔲 Rate limiting |
+| ✅ HTTP-only cookies | 🔲 Input validation |
+| ✅ Gateway-level authentication | 🔲 Structured logging |
+| ✅ Environment-based secrets | 🔲 Secret management |
+| ✅ Separated backend services | 🔲 Monitoring & error tracking |
+| ✅ Server-side payment verification | |
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Category | Technology |
+| :--- | :--- |
+| **Frontend** | React + Vite |
+| **Styling** | Tailwind CSS |
+| **State** | Redux Toolkit |
+| **Backend** | Node.js + Express |
+| **Agents** | LangChain + LangGraph |
+| **Database** | MongoDB |
+| **Sessions / Memory** | Redis |
+| **Auth** | Firebase Authentication |
+| **Search** | Tavily |
+| **AI Models** | Groq · Google Gemini · OpenRouter |
+| **Payments** | Razorpay |
+| **Code Editor** | Monaco Editor |
+| **Containers** | Docker |
+
+</div>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
 ## 📁 Project Structure
 
+<details>
+<summary><b>Click to expand</b></summary>
+
 ```text
-CortexAI/
-│
+Kivo-AI/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -259,28 +389,15 @@ CortexAI/
 │   │   │   ├── userSlice
 │   │   │   ├── conversationSlice
 │   │   │   └── messageSlice
-│   │   ├── utils/
-│   │   │   ├── axios
-│   │   │   └── firebase
-│   │   └── ...
+│   │   └── utils/
 │   └── package.json
 │
 ├── backend/
-│   ├── gateway/                # API Gateway — entry point, auth guard, routing
-│   │
+│   ├── gateway/
 │   ├── services/
-│   │   ├── auth/                # Firebase verification, sessions, login/logout
-│   │   │   ├── controllers/
-│   │   │   ├── routes/
-│   │   │   └── ...
-│   │   │
-│   │   └── agent/               # LangGraph orchestration & specialized agents
-│   │       ├── agents/
-│   │       ├── config/
-│   │       ├── controllers/
-│   │       ├── graph/
-│   │       └── routes/
-│   │
+│   │   ├── auth/       controllers · routes · ...
+│   │   ├── agent/      agents · config · controllers · graph · routes · ...
+│   │   └── billing/
 │   ├── shared/
 │   └── docker-compose.yml
 │
@@ -288,88 +405,51 @@ CortexAI/
 └── README.md
 ```
 
-The **frontend workspace layout**:
+</details>
 
-```text
-┌──────────────┬──────────────────────────┬──────────────────┐
-│   Sidebar    │        Chat Area         │  Artifact Panel  │
-│ Conversations│   User / AI Messages     │  Generated Files │
-└──────────────┴──────────────────────────┴──────────────────┘
-```
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-<br/>
+## 💡 Example Workflows
 
-## 🛠️ Tech Stack
+| You say or do | Routed to | Result |
+| :--- | :--- | :--- |
+| *"What is the difference between REST and GraphQL?"* | 💬 Chat Agent | Clear AI explanation |
+| *"Create a React Todo application"* | 💻 Coding Agent | Structured files in the Artifact Panel |
+| *"Find the latest AI news"* | 🔎 Search Agent (Tavily) | Summarized results with sources |
+| Upload a PDF | 📄 PDF Agent | Document understanding and answers |
+| Upload an image | 🖼️ Vision Agent | Image analysis |
+| Ask over your knowledge base | 🧠 RAG Agent | Grounded response |
 
-| Category | Technology |
-|---|---|
-| Frontend | React (Vite) |
-| Styling | Tailwind CSS |
-| State Management | Redux Toolkit |
-| Backend | Node.js + Express |
-| Agent Framework | LangChain + LangGraph |
-| Database | MongoDB |
-| Sessions / Memory | Redis |
-| Authentication | Firebase Authentication |
-| Web Search | Tavily |
-| AI Models | Groq / Google Gemini / OpenRouter |
-| API Communication | Axios |
-| Containerization | Docker |
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-<br/>
+## ⚡ Quick Start
 
-## 🚀 Getting Started
+### 1️⃣ Clone
 
-### 1. Clone the repository
 ```bash
 git clone <your-repository-url>
-cd CortexAI
+cd Kivo-AI
 ```
 
-### 2. Install frontend dependencies
-```bash
-cd frontend
-npm install
-```
-
-### 3. Install backend dependencies
-Install dependencies for the **gateway** and each **service** (`auth`, `agent`) according to their respective `package.json` files.
-
-### 4. Configure environment variables
-See [Environment Variables](#-environment-variables) below, then create the relevant `.env` files.
-
-### 5. Start infrastructure
-```bash
-docker compose up
-```
-
-### 6. Run each piece in development
+### 2️⃣ Install dependencies
 
 ```bash
 # Frontend
 cd frontend
-npm run dev
+npm install
 
-# Gateway
-cd backend/gateway
-npm run dev
-
-# Auth Service
-cd backend/services/auth
-npm run dev
-
-# Agent Service
-cd backend/services/agent
-npm run dev
+# Gateway (repeat for each backend service you run)
+cd ../backend/gateway
+npm install
 ```
 
-The frontend talks to the gateway; the gateway talks to whichever backend service the request needs.
+### 3️⃣ Configure environment variables
 
-<br/>
+Create a `.env` file for each service.
 
-## 🔑 Environment Variables
+<details>
+<summary><b>🚪 Gateway</b></summary>
 
-**Gateway**
 ```env
 AUTH_SERVICE_URL=http://localhost:8001
 AGENT_SERVICE_URL=http://localhost:8003
@@ -377,7 +457,11 @@ FRONTEND_URL=http://localhost:5173
 REDIS_URL=redis://localhost:6379
 ```
 
-**Agent Service**
+</details>
+
+<details>
+<summary><b>🤖 Agent Service</b></summary>
+
 ```env
 GROQ_API_KEY=your_key
 GOOGLE_API_KEY=your_key
@@ -387,123 +471,144 @@ MONGO_URI=your_mongodb_connection
 REDIS_URL=redis://localhost:6379
 ```
 
-> ⚠️ Never commit API keys, Firebase credentials, `.env` files, or service-account JSON files to GitHub.
+</details>
 
-<br/>
+<details>
+<summary><b>💳 Billing Service</b></summary>
 
-## 💾 Data & Session Requirements
-
-- **MongoDB** — the system of record for users, conversations, and messages. Works fine as a single local instance or Atlas cluster during development.
-- **Redis** — backs sessions created after Firebase login, and holds short-term agent memory (recent conversation context) so agents can respond with continuity without hitting MongoDB on every request.
-
-Both are wired up in `docker-compose.yml` for one-command local startup.
-
-<br/>
-
-## 🔒 Security
-
-- Firebase-based authentication for login
-- Redis-backed, HTTP-only cookie sessions
-- Protected API routes behind the gateway's auth check
-- Secrets isolated to environment variables
-- `.gitignore` protection for credentials and service-account files
-- Clear separation between the auth service and AI workloads
-
-> Production deployments should additionally add HTTPS, secure cookie flags, rate limiting, input validation, structured logging, and proper secret management (e.g. a secrets manager instead of plain `.env` files).
-
-<br/>
-
-## 🖥️ Example Workflows
-
-**General chat**
-```text
-"What is the difference between REST and GraphQL?" → Chat Agent → AI Response
+```env
+RAZORPAY_KEY_ID=your_key
+RAZORPAY_SECRET_KEY=your_secret
 ```
 
-**Code generation**
-```text
-"Create a React todo application" → Coding Intent Detection → Code Generation
-    → Generated Files → Artifact Panel
+</details>
+
+> [!CAUTION]
+> Never commit API keys, Firebase credentials, service-account files or `.env` files to GitHub.
+
+> [!TIP]
+> Start the infrastructure first so Redis and MongoDB are ready before the services boot.
+
+### 4️⃣ Start infrastructure
+
+```bash
+docker compose up
 ```
 
-**Debugging**
-```text
-"Why am I getting a 500 error from Axios?" → Coding Agent → Error Analysis
-    → Debugging Response
-```
+### 5️⃣ Run in development
 
-**Web search**
-```text
-"Find recent information about NVIDIA's latest AI models" → Search Agent
-    → Tavily → Search Results + Images
-```
+Open a terminal for each service:
 
-<br/>
+| Service | Command |
+| :--- | :--- |
+| 🖥️ Frontend | `cd frontend && npm run dev` |
+| 🚪 Gateway | `cd backend/gateway && npm run dev` |
+| 🔐 Auth | `cd backend/services/auth && npm run dev` |
+| 🤖 Agent | `cd backend/services/agent && npm run dev` |
 
-## 📸 Screenshots
+Open **http://localhost:5173**. The frontend talks to the gateway, and the gateway routes each request to the right backend service.
 
-| Main Workspace | Coding + Artifact Panel | Search + Image Results |
-|---|---|---|
-| <img src="https://placehold.co/380x240/0b1120/60a5fa?text=Main+Workspace" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/34d399?text=Coding+%2B+Artifact+Panel" width="100%"/> | <img src="https://placehold.co/380x240/0b1120/fbbf24?text=Search+%2B+Image+Results" width="100%"/> |
-
-<br/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
 ## 🗺️ Roadmap
 
-**✅ Core**
-- [x] React frontend · Express gateway · Firebase auth · Redis sessions · MongoDB
-- [x] LangGraph agent architecture with Chat, Coding, and Search agents
-- [x] Tavily integration with image search + lightbox preview
-- [x] Coding artifact panel
+<table>
+<tr>
+<td width="33%" valign="top">
 
-**🚧 In Progress**
-- [ ] Improved agent routing accuracy
-- [ ] Better coding artifact management
-- [ ] PDF and PPT workflows
-- [ ] Vision workflows
-- [ ] Deeper conversation memory
-- [ ] Production deployment hardening
+### ✅ Completed
 
-**🔮 Future**
+- [x] React frontend
+- [x] Express API Gateway
+- [x] Firebase authentication
+- [x] Redis sessions
+- [x] MongoDB persistence
+- [x] LangGraph architecture
+- [x] Chat Agent
+- [x] Coding Agent
+- [x] Search Agent + Tavily
+- [x] Image search
+- [x] PDF workflow
+- [x] PPT workflow
+- [x] Vision Agent
+- [x] RAG workflow
+- [x] Code Artifact Panel
+- [x] Billing + Razorpay
+- [x] Credit-based plans
+
+</td>
+<td width="33%" valign="top">
+
+### 🚧 Improving
+
+- [ ] Better agent routing accuracy
 - [ ] Streaming AI responses
-- [ ] File upload system
-- [ ] RAG / knowledge-base workflows
+- [ ] Advanced RAG pipelines
+- [ ] Better document ingestion
+- [ ] Improved artifact management
+- [ ] Deeper conversation memory
+- [ ] Better observability
+- [ ] Production deployment
+- [ ] Performance optimization
+
+</td>
+<td width="33%" valign="top">
+
+### 🔮 Future
+
 - [ ] Long-term memory
-- [ ] Agent observability
-- [ ] Advanced artifact editor
+- [ ] Advanced knowledge bases
+- [ ] More AI agents
+- [ ] Agent-to-agent collaboration
+- [ ] Workflow automation
+- [ ] Team workspaces
+- [ ] Collaboration features
+- [ ] More model providers
+- [ ] Advanced analytics
 
-<br/>
+</td>
+</tr>
+</table>
 
-## 📚 What This Project Demonstrates
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-Full-stack development · React architecture · REST APIs · Microservices · Firebase auth · Redis sessions · MongoDB · LangChain & LangGraph · Agent routing · LLM integration · Prompt engineering · Multi-agent orchestration.
+## 📊 What This Project Demonstrates
 
-<br/>
+A portfolio-level project showing practical experience in:
 
-## 🤝 Contributing
+`Full-stack development` · `React architecture` · `Node.js & Express` · `REST APIs` · `Microservices` · `API Gateway` · `Firebase Auth` · `Redis sessions` · `MongoDB` · `LangChain` · `LangGraph` · `Multi-agent systems` · `Agent routing` · `RAG` · `LLM integration` · `Prompt engineering` · `Computer vision workflows` · `Document AI` · `Web search` · `Structured code generation` · `AI artifacts` · `Payment integration` · `Credit-based SaaS` · `Docker` · `Cloud-ready architecture`
 
-```bash
-git checkout -b feature/your-feature
-```
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
-Make your changes, test locally, and open a pull request. Issues and suggestions are welcome too.
+## 🎯 Project Vision
 
-<br/>
+> [!IMPORTANT]
+> **AI should feel like a workspace, not a collection of disconnected tools.**
 
-## 📄 License
+Instead of opening separate apps for coding, research, document analysis, image understanding and general AI help, Kivo brings these workflows behind one interface and routes each task to the right agent.
 
-Currently a personal learning and portfolio project. Open-source license details will be added if/when the project is formally released.
-
-<br/>
-
-## 👨‍💻 Author
-
-**Rick Choudhury** — AI/ML student & full-stack AI developer, building CortexAI to explore the intersection of **AI × Agents × Full Stack × Systems**.
-
-<br/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:312e81,50:6366f1,100:a78bfa&height=3" width="100%" height="3" alt=""/>
 
 <div align="center">
 
-⭐ If CortexAI's architecture is useful or interesting to you, consider starring the repo.
+## 👨‍💻 Author
+
+**Anirban Choudhury**
+AI/ML Student & Full-Stack AI Developer
+
+Building Kivo AI at the intersection of **AI × Agents × Full Stack × Systems**
+
+<br/>
+
+### ⭐ If you find Kivo interesting, give the repository a star and follow along!
+
+<img src="https://github.com/user-attachments/assets/07f3e72d-5832-4d07-a516-703f80b71878" alt="Kivo logo" width="64"/>
+
+### Kivo AI
+**One Workspace. Every AI Agent You Need.**
+
+Built with ❤️ by **Anirban Choudhury**
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:8b5cf6,35:4f46e5,70:1e1b4b,100:020617&height=120&section=footer" width="100%" alt="footer"/>
 
 </div>

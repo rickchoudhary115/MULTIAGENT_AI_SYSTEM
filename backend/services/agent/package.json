@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec \"node --env-file=.env\" index.js"
+    "dev": "nodemon --exec \"node --env-file=.env\" index.js",
+    "start": "node index.js"
+
   },
   "keywords": [],
   "author": "",

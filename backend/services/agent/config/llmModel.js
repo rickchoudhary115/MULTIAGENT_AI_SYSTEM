@@ -9,6 +9,7 @@ import { ChatOpenAI } from "@langchain/openai";
 const groq = new ChatGroq({
   model: "openai/gpt-oss-120b",
   temperature: 0,
+  apiKey: process.env.GROQ_API_KEY,
 });
 const gemini = new ChatGoogleGenerativeAI({
   model: "gemini-3.5-flash", // stable choice

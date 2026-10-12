@@ -1,6 +1,7 @@
 import {
   Code2,
   X,
+  MicOff,
   FileText,
   Globe,
   ImageIcon,
@@ -34,7 +35,12 @@ function ChatInput() {
   const [selectedAgent, setSelectedAgent] = useState("Auto");
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(true);
+  const [speechError, setSpeechError] = useState("");
 
+  const recognitionRef = useRef(null);
+  const baseTextRef = useRef(""); // text already in the box when listening starts
   const fileRef = useRef(null);
 
   const { isLoading } = useSelector((state) => state.message);
@@ -42,6 +48,96 @@ function ChatInput() {
   const { selectedConversation } = useSelector((state) => state.conversation);
 
   const dispatch = useDispatch();
+
+  // =========================
+  // SPEECH RECOGNITION
+  // =========================
+
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true; // keep listening until stopped
+    recognition.interimResults = true; // show words while speaking
+    recognition.lang = navigator.language || "en-US";
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+
+      // Join every result (final + interim) from this listening session
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+
+      const spoken = transcript.trim();
+      const base = baseTextRef.current;
+
+      // Put the spoken words into the text input
+      setValue(base ? `${base} ${spoken}` : spoken);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("SPEECH ERROR:", event.error);
+
+      const messages = {
+        "not-allowed":
+          "Microphone permission was denied. Allow mic access in the browser.",
+        "service-not-allowed":
+          "Speech service is blocked. Use https or localhost.",
+        "audio-capture": "No microphone found.",
+        network: "Speech service needs an internet connection.",
+        "no-speech": "Didn't hear anything. Try again.",
+      };
+
+      setSpeechError(
+        messages[event.error] || `Voice input error: ${event.error}`,
+      );
+      setIsListening(false);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+
+    // Cleanup on unmount
+    return () => {
+      recognition.onresult = null;
+      recognition.onend = null;
+      recognition.onerror = null;
+      recognition.abort();
+    };
+  }, []);
+
+  const startListening = () => {
+    const recognition = recognitionRef.current;
+    if (!recognition || isListening) return;
+
+    baseTextRef.current = value.trim(); // keep whatever is already typed
+    setSpeechError("");
+
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Could not start recognition:", err);
+    }
+  };
+
+  const stopListening = () => {
+    recognitionRef.current?.stop(); // finalizes the last words, then fires onend
+  };
+
+  const toggleListening = () => {
+    if (isListening) stopListening();
+    else startListening();
+  };
 
   // =========================
   // IMAGE PREVIEW
@@ -69,6 +165,12 @@ function ChatInput() {
 
     // Don't send empty message
     if (!prompt) return;
+
+    // Stop mic so it doesn't write into the box after sending
+    if (isListening) {
+      recognitionRef.current?.abort();
+      setIsListening(false);
+    }
 
     // Start loading
     dispatch(setIsLoading(true));
@@ -354,11 +456,27 @@ function ChatInput() {
           </div>
         )}
 
+        {/* LISTENING STATUS */}
+
+        {isListening && (
+          <p className="text-[11px] text-red-400 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            Listening... tap the mic to stop
+          </p>
+        )}
+
+        {speechError && (
+          <p className="text-[11px] text-amber-400">{speechError}</p>
+        )}
+
         {/* TEXTAREA */}
 
         <textarea
           placeholder="Ask anything..."
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            if (isListening) recognitionRef.current?.stop();
+            setValue(e.target.value);
+          }}
           value={value}
           rows={3}
           className="
@@ -428,29 +546,51 @@ function ChatInput() {
               <Paperclip size={16} strokeWidth={1.8} />
             </button>
 
+            {/* VOICE INPUT */}
+
             <button
               type="button"
-              aria-label="Voice input"
-              className="
+              aria-label={isListening ? "Stop listening" : "Voice input"}
+              title={
+                !speechSupported
+                  ? "Voice input isn't supported in this browser"
+                  : isListening
+                    ? "Stop listening"
+                    : "Start voice input"
+              }
+              onClick={toggleListening}
+              disabled={!speechSupported}
+              className={`
+                relative
                 flex
                 items-center
                 justify-center
                 w-8
                 h-8
                 rounded-lg
-                text-slate-600
-                hover:text-slate-300
-                hover:bg-white/[0.06]
+                border
                 active:scale-95
                 transition-all
                 duration-150
-                bg-transparent
-                border
-                border-transparent
-                hover:border-white/[0.06]
-              "
+
+                ${
+                  isListening
+                    ? "text-red-400 bg-red-500/10 border-red-500/30"
+                    : "text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] bg-transparent border-transparent hover:border-white/[0.06]"
+                }
+
+                ${!speechSupported ? "opacity-40 cursor-not-allowed" : ""}
+              `}
             >
-              <Mic size={15} strokeWidth={1.8} />
+              {isListening && (
+                <span className="absolute inset-0 rounded-lg bg-red-500/20 animate-ping" />
+              )}
+
+              {isListening ? (
+                <MicOff size={15} strokeWidth={1.8} className="relative" />
+              ) : (
+                <Mic size={15} strokeWidth={1.8} className="relative" />
+              )}
             </button>
           </div>
 

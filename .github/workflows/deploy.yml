@@ -39,10 +39,7 @@ jobs:
           build_push() {
             repo="$1"
             dockerfile="$2"
-            docker build -f "$dockerfile" \
-              -t "$REGISTRY/$repo:latest" \
-              -t "$REGISTRY/$repo:${GITHUB_SHA}" \
-              backend
+            docker build -f "$dockerfile" -t "$REGISTRY/$repo:latest"-t "$REGISTRY/$repo:${GITHUB_SHA}" backend
             docker push --all-tags "$REGISTRY/$repo"
           }
 
@@ -61,10 +58,7 @@ jobs:
           SERVICES="${{ secrets.GATEWAY_SERVICE }} ${{ secrets.AUTH_SERVICE }} ${{ secrets.CHAT_SERVICE }} ${{ secrets.AGENT_SERVICE }} ${{ secrets.BILLING_SERVICE }}"
 
           for svc in $SERVICES; do
-            aws ecs update-service \
-              --cluster "$CLUSTER" \
-              --service "$svc" \
-              --force-new-deployment > /dev/null
+            aws ecs update-service   --cluster "$CLUSTER" --service "$svc" --force-new-deployment > /dev/null
           done
 
           aws ecs wait services-stable --cluster "$CLUSTER" --services $SERVICES
@@ -100,6 +94,4 @@ jobs:
       # CLOUDFRONT_DISTRIBUTION_ID must be the FRONTEND distribution (E2FI4X2VICVZ5E)
       - name: Invalidate CloudFront
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}  --paths "/*"

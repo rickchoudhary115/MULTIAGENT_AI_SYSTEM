@@ -12,7 +12,7 @@ const groq = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY,
 });
 const gemini = new ChatGoogleGenerativeAI({
-  model: "gemini-3.5-flash", // stable choice
+  model: "gemini-3.5-flash-lite", // stable choice
   temperature: 0,
 });
 const openrouter = new ChatOpenAI({

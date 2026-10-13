@@ -30,7 +30,7 @@ app.use("/api/agent", protect, proxyWithHeader(process.env.AGENT_SERVICE_URL));
 app.use("/api/billing",protect,proxyWithHeader(process.env.BILLING_SERVICE_URL));
 app.get("/api/me",protect,getCurrentUser);
 app.get("/",(req,res)=>{
-    res.json({ message: "Hello from Gateway" });
+    res.json({ message: "Hello from Gateway v5" });
 });
 ``
 app.listen(port,()=>{

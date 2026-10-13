@@ -1,13 +1,17 @@
+```yaml
 name: Kivo AI Deployment
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  # ECR Public registry alias (from the ECR Public console)
   REGISTRY_ALIAS: z8g7l2l8
 
 jobs:
@@ -16,52 +20,145 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # ECR Public auth only works in us-east-1, so AWS_REGION must be us-east-1
       - name: Login to Amazon ECR Public
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
 
-      - name: Build and push images
+      - name: Build and push backend images
+        shell: bash
         run: |
           set -euo pipefail
-          REGISTRY="public.ecr.aws/$REGISTRY_ALIAS"
+
+          REGISTRY="public.ecr.aws/${REGISTRY_ALIAS}"
 
           build_push() {
-            repo="$1"
-            dockerfile="$2"
-            docker build -f "$dockerfile" -t "$REGISTRY/$repo:latest" -t "$REGISTRY/$repo:${GITHUB_SHA}" backend
-            docker push --all-tags "$REGISTRY/$repo"
+            local repo="$1"
+            local dockerfile="$2"
+
+            echo "Building $repo using $dockerfile"
+
+            docker build \
+              -f "$dockerfile" \
+              -t "$REGISTRY/$repo:latest" \
+              -t "$REGISTRY/$repo:${GITHUB_SHA}" \
+              backend
+
+            docker push "$REGISTRY/$repo:latest"
+            docker push "$REGISTRY/$repo:${GITHUB_SHA}"
           }
 
-          # File names are case-sensitive on Linux: check DockerFile vs Dockerfile
-          build_push gateway         backend/gateway/DockerFile
-          build_push auth-service    backend/services/auth/DockerFile
-          build_push chat-service    backend/services/chat/DockerFile
-          build_push agent-service   backend/services/agent/DockerFile
+          build_push gateway backend/gateway/DockerFile
+          build_push auth-service backend/services/auth/DockerFile
+          build_push chat-service backend/services/chat/DockerFile
+          build_push agent-service backend/services/agent/DockerFile
           build_push billing-service backend/services/billing/DockerFile
 
       - name: Deploy ECS services
+        shell: bash
         env:
           CLUSTER: ${{ secrets.ECS_CLUSTER }}
+          GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
+          AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
+          CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
+          AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
+          BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
         run: |
           set -euo pipefail
-          SERVICES="${{ secrets.GATEWAY_SERVICE }} ${{ secrets.AUTH_SERVICE }} ${{ secrets.CHAT_SERVICE }} ${{ secrets.AGENT_SERVICE }} ${{ secrets.BILLING_SERVICE }}"
 
-          for svc in $SERVICES; do
-            aws ecs update-service   --cluster "$CLUSTER" --service "$svc" --force-new-deployment > /dev/null
+          SERVICES=(
+            "$GATEWAY_SERVICE"
+            "$AUTH_SERVICE"
+            "$CHAT_SERVICE"
+            "$AGENT_SERVICE"
+            "$BILLING_SERVICE"
+          )
+
+          for svc in "${SERVICES[@]}"; do
+            if [[ -z "$svc" ]]; then
+              echo "::error::An ECS service secret is empty."
+              exit 1
+            fi
+
+            echo "Starting deployment for $svc"
+
+            aws ecs update-service \
+              --cluster "$CLUSTER" \
+              --service "$svc" \
+              --force-new-deployment
           done
 
-          aws ecs wait services-stable --cluster "$CLUSTER" --services $SERVICES
+      - name: Wait for ECS deployments
+        shell: bash
+        env:
+          CLUSTER: ${{ secrets.ECS_CLUSTER }}
+          GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
+          AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
+          CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
+          AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
+          BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
+        run: |
+          set -euo pipefail
+
+          SERVICES=(
+            "$GATEWAY_SERVICE"
+            "$AUTH_SERVICE"
+            "$CHAT_SERVICE"
+            "$AGENT_SERVICE"
+            "$BILLING_SERVICE"
+          )
+
+          failed=0
+
+          for svc in "${SERVICES[@]}"; do
+            echo "Waiting for ECS service: $svc"
+
+            if aws ecs wait services-stable \
+              --cluster "$CLUSTER" \
+              --services "$svc"; then
+              echo "$svc stabilized successfully."
+            else
+              echo "::error::Service $svc failed to stabilize."
+              failed=1
+
+              echo "Recent service events:"
+              aws ecs describe-services \
+                --cluster "$CLUSTER" \
+                --services "$svc" \
+                --query 'services[0].events[0:10].[createdAt,message]' \
+                --output table || true
+
+              echo "Recent stopped tasks:"
+              TASKS=$(aws ecs list-tasks \
+                --cluster "$CLUSTER" \
+                --service-name "$svc" \
+                --desired-status STOPPED \
+                --query 'taskArns' \
+                --output text || true)
+
+              if [[ -n "$TASKS" && "$TASKS" != "None" ]]; then
+                aws ecs describe-tasks \
+                  --cluster "$CLUSTER" \
+                  --tasks $TASKS \
+                  --query 'tasks[].{task:taskArn,stoppedReason:stoppedReason,containers:containers[].{name:name,exitCode:exitCode,reason:reason}}' \
+                  --output json || true
+              fi
+            fi
+          done
+
+          if [[ "$failed" -ne 0 ]]; then
+            echo "::error::One or more ECS services failed to stabilize."
+            exit 1
+          fi
 
   deploy-frontend:
     needs: deploy-backend
@@ -69,29 +166,34 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Build frontend
         working-directory: frontend
-        # Add build-time variables here if the app needs them, e.g.:
-        # env:
-        #   VITE_API_URL: /api
-        #   VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: |
           npm ci
           npm run build
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Upload to S3
-        run: aws s3 sync frontend/dist s3://${{ secrets.S3_BUCKET }} --delete
+      - name: Upload frontend to S3
+        run: aws s3 sync frontend/dist "s3://${{ secrets.S3_BUCKET }}" --delete
 
-      # CLOUDFRONT_DISTRIBUTION_ID must be the FRONTEND distribution (E2FI4X2VICVZ5E)
-      - name: Invalidate CloudFront
+      - name: Invalidate CloudFront cache
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}  --paths "/*"
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"
+```

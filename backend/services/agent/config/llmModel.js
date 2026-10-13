@@ -33,6 +33,12 @@ const openrouter = new ChatOpenAI({
     },
   },
 });
+const logModelError = (agent, error) => {
+  console.error(`[Kivo AI] Agent: ${agent}`);
+  console.error(`[Kivo AI] Error:`, error.message);
+  console.error(`[Kivo AI] Status:`, error.status ?? error.statusCode);
+};
+
 
 export const getModel = (agent) => {
   switch (agent) {

@@ -39,7 +39,7 @@ jobs:
           build_push() {
             repo="$1"
             dockerfile="$2"
-            docker build -f "$dockerfile" -t "$REGISTRY/$repo:latest"-t "$REGISTRY/$repo:${GITHUB_SHA}" backend
+            docker build -f "$dockerfile" -t "$REGISTRY/$repo:latest" -t "$REGISTRY/$repo:${GITHUB_SHA}" backend
             docker push --all-tags "$REGISTRY/$repo"
           }
 

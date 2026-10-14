@@ -1,182 +1,182 @@
 
-name: Kivo AI Deployment
+# name: Kivo AI Deployment
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
-permissions:
-  contents: read
+# permissions:
+#   contents: read
 
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  REGISTRY_ALIAS: z8g7l2l8
+# env:
+#   AWS_REGION: ${{ secrets.AWS_REGION }}
+#   REGISTRY_ALIAS: z8g7l2l8
 
-jobs:
-  deploy-backend:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy-backend:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
+#       - name: Login to Amazon ECR Public
+#         uses: aws-actions/amazon-ecr-login@v2
+#         with:
+#           registry-type: public
 
-      - name: Build and push backend images
-        shell: bash
-        run: |
-          set -euo pipefail
+#       - name: Build and push backend images
+#         shell: bash
+#         run: |
+#           set -euo pipefail
 
-          REGISTRY="public.ecr.aws/${REGISTRY_ALIAS}"
+#           REGISTRY="public.ecr.aws/${REGISTRY_ALIAS}"
 
-          build_push() {
-            local repo="$1"
-            local dockerfile="$2"
+#           build_push() {
+#             local repo="$1"
+#             local dockerfile="$2"
 
-            echo "Building $repo using $dockerfile"
+#             echo "Building $repo using $dockerfile"
 
-            docker build \
-              -f "$dockerfile" \
-              -t "$REGISTRY/$repo:latest" \
-              -t "$REGISTRY/$repo:${GITHUB_SHA}" \
-              backend
+#             docker build \
+#               -f "$dockerfile" \
+#               -t "$REGISTRY/$repo:latest" \
+#               -t "$REGISTRY/$repo:${GITHUB_SHA}" \
+#               backend
 
-            docker push "$REGISTRY/$repo:latest"
-            docker push "$REGISTRY/$repo:${GITHUB_SHA}"
-          }
+#             docker push "$REGISTRY/$repo:latest"
+#             docker push "$REGISTRY/$repo:${GITHUB_SHA}"
+#           }
 
-          build_push gateway backend/gateway/DockerFile
-          build_push auth-service backend/services/auth/DockerFile
-          build_push chat-service backend/services/chat/DockerFile
-          build_push agent-service backend/services/agent/DockerFile
-          build_push billing-service backend/services/billing/DockerFile
+#           build_push gateway backend/gateway/DockerFile
+#           build_push auth-service backend/services/auth/DockerFile
+#           build_push chat-service backend/services/chat/DockerFile
+#           build_push agent-service backend/services/agent/DockerFile
+#           build_push billing-service backend/services/billing/DockerFile
 
-      - name: Deploy ECS services
-        shell: bash
-        env:
-          CLUSTER: ${{ secrets.ECS_CLUSTER }}
-          GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
-          AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
-          CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
-          AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
-          BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
-        run: |
-          set -euo pipefail
+#       - name: Deploy ECS services
+#         shell: bash
+#         env:
+#           CLUSTER: ${{ secrets.ECS_CLUSTER }}
+#           GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
+#           AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
+#           CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
+#           AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
+#           BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
+#         run: |
+#           set -euo pipefail
 
-          SERVICES=(
-            "$GATEWAY_SERVICE"
-            "$AUTH_SERVICE"
-            "$CHAT_SERVICE"
-            "$AGENT_SERVICE"
-            "$BILLING_SERVICE"
-          )
+#           SERVICES=(
+#             "$GATEWAY_SERVICE"
+#             "$AUTH_SERVICE"
+#             "$CHAT_SERVICE"
+#             "$AGENT_SERVICE"
+#             "$BILLING_SERVICE"
+#           )
 
-          for svc in "${SERVICES[@]}"; do
-            if [[ -z "$svc" ]]; then
-              echo "::error::An ECS service secret is empty."
-              exit 1
-            fi
+#           for svc in "${SERVICES[@]}"; do
+#             if [[ -z "$svc" ]]; then
+#               echo "::error::An ECS service secret is empty."
+#               exit 1
+#             fi
 
-            echo "Starting deployment for $svc"
+#             echo "Starting deployment for $svc"
 
-            aws ecs update-service \
-              --cluster "$CLUSTER" \
-              --service "$svc" \
-              --force-new-deployment
-          done
+#             aws ecs update-service \
+#               --cluster "$CLUSTER" \
+#               --service "$svc" \
+#               --force-new-deployment
+#           done
 
-      - name: Wait for ECS deployments
-        shell: bash
-        env:
-          CLUSTER: ${{ secrets.ECS_CLUSTER }}
-          GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
-          AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
-          CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
-          AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
-          BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
-        run: |
-          set -euo pipefail
+#       - name: Wait for ECS deployments
+#         shell: bash
+#         env:
+#           CLUSTER: ${{ secrets.ECS_CLUSTER }}
+#           GATEWAY_SERVICE: ${{ secrets.GATEWAY_SERVICE }}
+#           AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
+#           CHAT_SERVICE: ${{ secrets.CHAT_SERVICE }}
+#           AGENT_SERVICE: ${{ secrets.AGENT_SERVICE }}
+#           BILLING_SERVICE: ${{ secrets.BILLING_SERVICE }}
+#         run: |
+#           set -euo pipefail
 
-          SERVICES=(
-            "$GATEWAY_SERVICE"
-            "$AUTH_SERVICE"
-            "$CHAT_SERVICE"
-            "$AGENT_SERVICE"
-            "$BILLING_SERVICE"
-          )
+#           SERVICES=(
+#             "$GATEWAY_SERVICE"
+#             "$AUTH_SERVICE"
+#             "$CHAT_SERVICE"
+#             "$AGENT_SERVICE"
+#             "$BILLING_SERVICE"
+#           )
 
-          failed=0
+#           failed=0
 
-          for svc in "${SERVICES[@]}"; do
-            echo "Waiting for ECS service: $svc"
+#           for svc in "${SERVICES[@]}"; do
+#             echo "Waiting for ECS service: $svc"
 
-            if aws ecs wait services-stable \
-              --cluster "$CLUSTER" \
-              --services "$svc"; then
-              echo "$svc stabilized successfully."
-            else
-              echo "::error::Service $svc failed to stabilize."
-              failed=1
+#             if aws ecs wait services-stable \
+#               --cluster "$CLUSTER" \
+#               --services "$svc"; then
+#               echo "$svc stabilized successfully."
+#             else
+#               echo "::error::Service $svc failed to stabilize."
+#               failed=1
 
-              echo "Recent service events:"
-              aws ecs describe-services \
-                --cluster "$CLUSTER" \
-                --services "$svc" \
-                --query 'services[0].events[0:10].[createdAt,message]' \
-                --output table || true
+#               echo "Recent service events:"
+#               aws ecs describe-services \
+#                 --cluster "$CLUSTER" \
+#                 --services "$svc" \
+#                 --query 'services[0].events[0:10].[createdAt,message]' \
+#                 --output table || true
 
-              echo "Recent stopped tasks:"
-              TASKS=$(aws ecs list-tasks \
-                --cluster "$CLUSTER" \
-                --service-name "$svc" \
-                --desired-status STOPPED \
-                --query 'taskArns' \
-                --output text || true)
+#               echo "Recent stopped tasks:"
+#               TASKS=$(aws ecs list-tasks \
+#                 --cluster "$CLUSTER" \
+#                 --service-name "$svc" \
+#                 --desired-status STOPPED \
+#                 --query 'taskArns' \
+#                 --output text || true)
 
-              if [[ -n "$TASKS" && "$TASKS" != "None" ]]; then
-                aws ecs describe-tasks \
-                  --cluster "$CLUSTER" \
-                  --tasks $TASKS \
-                  --query 'tasks[].{task:taskArn,stoppedReason:stoppedReason,containers:containers[].{name:name,exitCode:exitCode,reason:reason}}' \
-                  --output json || true
-              fi
-            fi
-          done
+#               if [[ -n "$TASKS" && "$TASKS" != "None" ]]; then
+#                 aws ecs describe-tasks \
+#                   --cluster "$CLUSTER" \
+#                   --tasks $TASKS \
+#                   --query 'tasks[].{task:taskArn,stoppedReason:stoppedReason,containers:containers[].{name:name,exitCode:exitCode,reason:reason}}' \
+#                   --output json || true
+#               fi
+#             fi
+#           done
 
-          if [[ "$failed" -ne 0 ]]; then
-            echo "::error::One or more ECS services failed to stabilize."
-            exit 1
-          fi
+#           if [[ "$failed" -ne 0 ]]; then
+#             echo "::error::One or more ECS services failed to stabilize."
+#             exit 1
+#           fi
 
-      - name: Build frontend
-        working-directory: frontend
-        env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-        run: |
-          npm ci
+#       - name: Build frontend
+#         working-directory: frontend
+#         env:
+#           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+#           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+#           VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+#           VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+#           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+#           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+#         run: |
+#           npm ci
 
-          if [ -z "$VITE_FIREBASE_API_KEY" ]; then
-            echo "::error::VITE_FIREBASE_API_KEY is missing."
-            exit 1
-          fi
+#           if [ -z "$VITE_FIREBASE_API_KEY" ]; then
+#             echo "::error::VITE_FIREBASE_API_KEY is missing."
+#             exit 1
+#           fi
 
-          echo "Firebase API key is present."
-          npm run build
+#           echo "Firebase API key is present."
+#           npm run build
 

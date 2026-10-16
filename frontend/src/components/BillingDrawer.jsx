@@ -154,7 +154,7 @@ function BillingDrawer({ open, onClose }) {
 
         currency: order.currency || "INR",
 
-        name: "CortexAI",
+        name: "Kivo AI",
 
         description: `${plan.name} Plan`,
 

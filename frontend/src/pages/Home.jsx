@@ -91,7 +91,7 @@ function Home() {
           <div className="w-[340px] bg-black/80 p-7 rounded-2xl border border-white/[0.08] flex flex-col gap-5">
             <div className="flex flex-col gap-2 text-left">
               <h2 className="text-xl font-semibold text-slate-100 tracking-tight">
-                Welcome to CortexAi
+                Welcome to Kivo Ai
               </h2>
 
               <p className="text-[13px] text-slate-500 py-1 px-0">
